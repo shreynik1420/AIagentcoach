@@ -11,7 +11,7 @@ import { MessageCircle, Share, ThumbsDown, ThumbsUp, Handshake, TrendingUp, Zap,
 import ReactMarkdown from 'react-markdown'
 
 type Message = {
-  role: 'user' | 'ai'
+  role: 'user' | 'assistant' | 'system'
   content: string
 }
 
@@ -105,7 +105,7 @@ export function Page() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             messages: [...messages, userMessage],
-            chatbot: currentExpert,
+            chatbot: currentExpert.toLowerCase(), // Convert to lowercase
           }),
         });
   
@@ -119,11 +119,11 @@ export function Page() {
           throw new Error(data.error);
         }
   
-        setMessages(prev => [...prev, { role: 'ai', content: data.response }]);
+        setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
       } catch (error) {
         console.error('Error:', error);
         setMessages(prev => [...prev, { 
-          role: 'ai', 
+          role: 'assistant', 
           content: 'Sorry, I encountered an error. Please try again.' 
         }]);
       }
@@ -261,7 +261,7 @@ export function Page() {
                       <div className={`p-3 rounded-lg ${message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'}`}>
                         <ReactMarkdown>{message.content}</ReactMarkdown>
                       </div>
-                      {message.role === 'ai' && (
+                      {message.role === 'assistant' && (
                         <div className="flex space-x-2">
                           <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
                             <ThumbsUp className="h-4 w-4" />

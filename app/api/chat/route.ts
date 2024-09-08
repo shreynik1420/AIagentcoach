@@ -59,6 +59,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Messages and chatbot type are required.' }, { status: 400 });
     }
 
+    const validChatbotTypes = ['sales', 'motivation', 'negotiations', 'general'];
+    if (!validChatbotTypes.includes(chatbot)) {
+      return NextResponse.json({ error: 'Invalid chatbot type.' }, { status: 400 });
+    }
+
     const question = messages[messages.length - 1].content;
 
     const embeddingResponse = await axios.post(
