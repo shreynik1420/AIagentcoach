@@ -23,9 +23,9 @@ const TopicIntroduction: React.FC<{ topic: ExpertType; onAskQuestion: (question:
       icon: <Brain className="w-12 h-12 md:w-16 md:h-16" />,
       description: "Your personal AI Coach for various aspects of professional and personal development.",
       questions: [
-        { icon: <HelpCircle />, text: "How can AI coaching benefit me?" },
+        { icon: <HelpCircle />, text: "How can AI real estate coaching benefit me?" },
         { icon: <Target />, text: "What areas can you assist me with?" },
-        { icon: <MessageCircle />, text: "How do I get started with AI coaching?" },
+        { icon: <MessageCircle />, text: "How do I get started with AI real-estate coaching?" },
         { icon: <FileText />, text: "Can you explain your coaching methodology?" },
       ],
     },
@@ -33,19 +33,19 @@ const TopicIntroduction: React.FC<{ topic: ExpertType; onAskQuestion: (question:
       icon: <Handshake className="w-12 h-12 md:w-16 md:h-16" />,
       description: "Master the art of win-win outcomes and effective communication.",
       questions: [
-        { icon: <HelpCircle />, text: "How do I prepare for a salary negotiation?" },
+        { icon: <HelpCircle />, text: "What are some common mistakes to avoid during real estate negotiations?" },
         { icon: <MessageCircle />, text: "What are some effective negotiation techniques?" },
         { icon: <Target />, text: "How to negotiate with difficult personalities?" },
-        { icon: <FileText />, text: "Can you explain the BATNA concept in negotiations?" },
+        { icon: <FileText />, text: "How should I handle counteroffers from sellers or buyers?" },
       ],
     },
     Sales: {
       icon: <TrendingUp className="w-12 h-12 md:w-16 md:h-16" />,
       description: "Boost your sales performance with expert strategies and techniques.",
       questions: [
-        { icon: <HelpCircle />, text: "What are the key elements of a successful sales pitch?" },
+        { icon: <HelpCircle />, text: "What are the key elements of a successful real estate sales pitch?" },
         { icon: <MessageCircle />, text: "How can I improve my cold calling skills?" },
-        { icon: <Target />, text: "What are effective closing techniques in sales?" },
+        { icon: <Target />, text: "What are effective closing techniques in real estate sales?" },
         { icon: <BarChart />, text: "How to analyze and improve sales metrics?" },
       ],
     },
@@ -53,7 +53,7 @@ const TopicIntroduction: React.FC<{ topic: ExpertType; onAskQuestion: (question:
       icon: <Zap className="w-12 h-12 md:w-16 md:h-16" />,
       description: "Unlock your potential with powerful motivation and goal-setting strategies.",
       questions: [
-        { icon: <HelpCircle />, text: "How can I stay motivated during challenging times?" },
+        { icon: <HelpCircle />, text: "How can I stay motivated during a down-market in real estate?" },
         { icon: <Target />, text: "What are some effective goal-setting techniques?" },
         { icon: <MessageCircle />, text: "How to overcome procrastination and boost productivity?" },
         { icon: <FileText />, text: "Can you suggest daily habits for maintaining motivation?" },
@@ -271,19 +271,19 @@ export function Page() {
                         {message.content}
                       </ReactMarkdown>
                     </div>
-                      {message.role === 'assistant' && (
-                        <div className="flex space-x-2">
-                          <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
-                            <ThumbsUp className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
-                            <ThumbsDown className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
-                            <Share className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      )}
+                    {message.role === 'assistant' && (
+                      <div className="flex space-x-2">
+                        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-gray-800">
+                          <ThumbsUp className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-gray-800">
+                          <ThumbsDown className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-gray-800">
+                          <Share className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                     </div>
                   </div>
                 ))
