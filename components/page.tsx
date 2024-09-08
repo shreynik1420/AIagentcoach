@@ -215,9 +215,9 @@ export function Page() {
       <div className="flex flex-1 overflow-hidden pt-16"> {/* Added pt-16 for header height */}
         {/* Sidebar */}
         <div className={`${isSidebarOpen ? 'block' : 'hidden'} md:block fixed md:relative z-20 w-64 h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] bg-gray-900 border-r border-gray-700 transition-all duration-300 ease-in-out overflow-y-auto`}>
-          <Button
+        <Button
             variant="ghost"
-            className="flex items-center justify-center h-16 w-full border-b border-gray-700 text-white hover:bg-gray-800"
+            className="flex items-center justify-center h-16 w-full border-b border-gray-700 text-white hover:text-white hover:bg-gray-800"
             onClick={() => handleExpertClick('General')}
           >
             <MessageCircle className="h-6 w-6 mr-2" />
@@ -258,9 +258,19 @@ export function Page() {
                       )}
                     </Avatar>
                     <div className="space-y-2 max-w-[70%] md:max-w-[80%]">
-                      <div className={`p-3 rounded-lg ${message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'}`}>
-                        <ReactMarkdown>{message.content}</ReactMarkdown>
-                      </div>
+                    <div className={`p-3 rounded-lg ${message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'}`}>
+                      <ReactMarkdown
+                        components={{
+                          p: ({ node, ...props }) => <p className="mb-2" {...props} />,
+                          ul: ({ node, ...props }) => <ul className="list-disc pl-4 mb-2" {...props} />,
+                          ol: ({ node, ...props }) => <ol className="list-decimal pl-4 mb-2" {...props} />,
+                          li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                          strong: ({ node, ...props }) => <strong className="font-bold" {...props} />,
+                        }}
+                      >
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
                       {message.role === 'assistant' && (
                         <div className="flex space-x-2">
                           <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
