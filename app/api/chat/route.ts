@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
     const completionResponse = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
-        model: 'gpt-4-turbo-preview',
+        model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: (systemPrompt[chatbot as keyof typeof systemPrompt] + context) },
           ...messages
