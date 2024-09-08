@@ -1,5 +1,6 @@
 'use client'
 
+import axios from 'axios';
 import React, { useState, useRef, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -95,24 +96,39 @@ export function Page() {
 
   const handleSendMessage = async (message: string) => {
     if (message.trim()) {
-      const userMessage = { role: 'user', content: message }
-      setMessages(prev => [...prev, userMessage])
+      const userMessage: Message = { role: 'user', content: message };
+      setMessages(prev => [...prev, userMessage]);
       
-      // Simulating API call to GPT-4
       try {
         const response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: message, expert: currentExpert }),
-        })
-        const data = await response.json()
-        setMessages(prev => [...prev, { role: 'ai', content: data.message }])
+          body: JSON.stringify({
+            messages: [...messages, userMessage],
+            chatbot: currentExpert,
+          }),
+        });
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+  
+        const data = await response.json();
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+  
+        setMessages(prev => [...prev, { role: 'ai', content: data.response }]);
       } catch (error) {
-        console.error('Error:', error)
-        setMessages(prev => [...prev, { role: 'ai', content: 'Sorry, I encountered an error. Please try again.' }])
+        console.error('Error:', error);
+        setMessages(prev => [...prev, { 
+          role: 'ai', 
+          content: 'Sorry, I encountered an error. Please try again.' 
+        }]);
       }
     }
-  }
+  };
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault()
