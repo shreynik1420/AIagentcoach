@@ -285,9 +285,9 @@ export function Page() {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <Image
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/2-LNqJvtMncHrGgssgeeVhV3hMJV8k6Z.png"
-            alt="AgentCoach.ai Logo"
+          <img 
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/2-LNqJvtMncHrGgssgeeVhV3hMJV8k6Z.png" 
+            alt="AgentCoach.ai Logo" 
             className="h-8 md:h-12"
           />
         </div>
