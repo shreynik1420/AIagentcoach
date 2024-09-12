@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -175,10 +177,11 @@ export function Page() {
         const decoder = new TextDecoder();
         let done = false;
 
-        let assistantMessage: Message = { role: 'assistant', content: '' };
+        const assistantMessage: Message = { role: 'assistant', content: '' };
         setMessages((prev) => [...prev, assistantMessage]);
         const newMessages = [...messages, userMessage];
-        let assistantMessageIndex = newMessages.length;
+        const assistantMessageIndex = messages.length;
+
 
         while (!done) {
           const { value, done: doneReading } = await reader.read();
@@ -282,7 +285,7 @@ export function Page() {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <img
+          <Image
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/2-LNqJvtMncHrGgssgeeVhV3hMJV8k6Z.png"
             alt="AgentCoach.ai Logo"
             className="h-8 md:h-12"
