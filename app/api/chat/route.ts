@@ -124,7 +124,6 @@ export async function POST(req: NextRequest) {
             body: JSON.stringify({
               model: 'gpt-4o-mini', // Replace with 'gpt-4-mini' if available
               messages: openAIMessages,
-              temperature: 0.7,
               stream: true,
             }),
           });
