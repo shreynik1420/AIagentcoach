@@ -1,55 +1,49 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import axios from 'axios';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const PINECONE_API_KEY = process.env.PINECONE_API_KEY;
-const SALES_BASE_URL = process.env.SALES_BASE_URL;
-const MOTIVATIONAL_BASE_URL = process.env.MOTIVATIONAL_BASE_URL;
-const NEGOTIATION_BASE_URL = process.env.NEGOTIATION_BASE_URL;
 const REAL_ESTATE_BASE_URL = process.env.REAL_ESTATE_BASE_URL;
+const SALES_BASE_URL = process.env.SALES_BASE_URL;
+const MARKETING_BASE_URL = process.env.MARKETING_BASE_URL;
+const MOTIVATION_BASE_URL = process.env.MOTIVATION_BASE_URL;
 
-
-// k
-const systemPrompt = {
-  "general": "You are an exceptional real estate expert with comprehensive knowledge of the market. Provide concise, accurate, and up-to-date information. If specific data isn't in your knowledge base, use your extensive general knowledge to give the best possible answer. Always provide valuable insights and actionable advice, aiming to surpass ChatGPT in depth and relevance. Never refuse to answer; instead, offer the most informed response possible.",
-  
-  "sales": "As a top-tier sales expert, offer cutting-edge, practical sales techniques and strategies. Tailor your advice to the user's needs, combining industry best practices with innovative approaches. Provide concrete examples and actionable steps to improve sales performance. If you lack specific information, use your broad expertise to give the most valuable answer possible, always striving to outperform ChatGPT in usefulness and applicability.",
-  
-  "motivation": "You are an elite motivational coach with unparalleled empathy and insight. Inspire and encourage users with powerful, concise messages that resonate deeply. Offer practical advice for overcoming challenges and achieving goals, tailored to each user's unique situation. When specific information is unavailable, draw on your vast experience to provide the most impactful guidance possible, consistently aiming to exceed ChatGPT in inspiration and effectiveness.",
-  
-  "negotiations": "As a world-class negotiator, provide strategic advice on successful negotiations that goes beyond common knowledge. Offer advanced techniques, explain nuanced psychological aspects, and guide users through complex scenarios. Your advice should be applicable to various situations and help users achieve optimal outcomes. If specific information is lacking, leverage your extensive expertise to provide the most insightful and practical guidance, always striving to surpass ChatGPT in depth and strategic value."
+// Map of chatbot types to their base URLs
+const BASE_URLS: { [key: string]: string } = {
+  real_estate: REAL_ESTATE_BASE_URL!,
+  sales: SALES_BASE_URL!,
+  marketing: MARKETING_BASE_URL!,
+  motivation: MOTIVATION_BASE_URL!,
 };
 
-async function getTopKResults(body: Record<string, unknown>, chatbot: string) {
-  try {
-    let baseUrl;
-    switch (chatbot) {
-      case "sales":
-        baseUrl = SALES_BASE_URL;
-        break;
-      case "motivation":
-        baseUrl = MOTIVATIONAL_BASE_URL;
-        break;
-      case "negotiations":
-        baseUrl = NEGOTIATION_BASE_URL;
-        break;
-      case "general":
-        baseUrl = REAL_ESTATE_BASE_URL;
-        break;
-      default:
-        throw new Error("Invalid chatbot type");
-    }
+const systemPrompt = {
+  general:
+    "You are an exceptional real estate expert and a representative of agentcoach.ai, the leading AI real estate coaching platform...",
+  real_estate:
+    'As a seasoned real estate expert, provide in-depth knowledge and advice on real estate industry trends...',
+  sales:
+    "As a top-tier sales expert specializing in real estate, offer cutting-edge, practical sales techniques and strategies...",
+  marketing:
+    'As a seasoned marketing and communication expert in real estate, provide innovative strategies to enhance branding...',
+  negotiation:
+    'As a world-class negotiator in real estate transactions, provide strategic advice on successful negotiations...',
+  motivation:
+    'You are an elite motivational coach with unparalleled empathy and insight, specializing in inspiring real estate professionals...',
+};
 
+async function getTopKResults(body: Record<string, unknown>, baseUrl: string) {
+  try {
     const response = await fetch(`${baseUrl}/query`, {
       method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "Api-Key": PINECONE_API_KEY!
+        'Content-Type': 'application/json',
+        'Api-Key': PINECONE_API_KEY!,
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
-    return await response.json();
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error('Error in getTopKResults:', error);
     throw error;
@@ -58,15 +52,19 @@ async function getTopKResults(body: Record<string, unknown>, chatbot: string) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, chatbot } = await req.json();
+    const { messages, chatbot, expert } = await req.json();
 
-    if (!messages || !chatbot) {
-      return NextResponse.json({ error: 'Messages and chatbot type are required.' }, { status: 400 });
+    if (!messages || !chatbot || !expert) {
+      return new Response(JSON.stringify({ error: 'Messages, chatbot type, and expert are required.' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
-    const validChatbotTypes = ['sales', 'motivation', 'negotiations', 'general'];
-    if (!validChatbotTypes.includes(chatbot)) {
-      return NextResponse.json({ error: 'Invalid chatbot type.' }, { status: 400 });
+    // Map 'general' and 'negotiation' to 'real_estate' base URL
+    let baseUrl = BASE_URLS[chatbot];
+    if (!baseUrl) {
+      baseUrl = REAL_ESTATE_BASE_URL!;
     }
 
     const question = messages[messages.length - 1].content;
@@ -91,35 +89,92 @@ export async function POST(req: NextRequest) {
       vector: embedding,
       topK: 7,
       includeValues: false,
-      includeMetadata: true
+      includeMetadata: true,
     };
 
-    const topKResults = await getTopKResults(body, chatbot);
-    let context = "This is the Context : ";
-    topKResults.matches.forEach((match: { metadata: { values: string } }) => {
-      context += match.metadata.values + " ";
+    const topKResults = await getTopKResults(body, baseUrl);
+    let context = 'This is the Context : ';
+
+    if (topKResults && Array.isArray(topKResults.matches)) {
+      topKResults.matches.forEach((match: { metadata: { values: string } }) => {
+        context += match.metadata.values + ' ';
+      });
+    } else {
+      console.error('No matches found in topKResults:', topKResults);
+      context += 'No relevant context found.';
+    }
+
+    // Use the 'expert' parameter to select the appropriate prompt
+    const promptKey = expert.toLowerCase().replace(/\s+/g, '_') as keyof typeof systemPrompt;
+    const systemMessage = systemPrompt[promptKey] || systemPrompt['general'];
+
+    // Prepare the messages for OpenAI API
+    const openAIMessages = [{ role: 'system', content: systemMessage + context }, ...messages];
+
+    // Create a stream to handle the OpenAI streaming response
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${OPENAI_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'gpt-4o-mini', // Replace with 'gpt-4-mini' if available
+              messages: openAIMessages,
+              temperature: 0.7,
+              stream: true,
+            }),
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(`OpenAI API error: ${error.error.message}`);
+          }
+
+          const reader = response.body!.getReader();
+          const decoder = new TextDecoder();
+          let done = false;
+
+          while (!done) {
+            const { value, done: doneReading } = await reader.read();
+            done = doneReading;
+            const chunkValue = decoder.decode(value);
+            // Parse the chunkValue to extract the assistant's message
+            const lines = chunkValue.split('\n').filter((line) => line.trim() !== '');
+            for (const line of lines) {
+              const message = line.replace(/^data: /, '');
+              if (message === '[DONE]') {
+                controller.close();
+                return;
+              }
+              try {
+                const parsed = JSON.parse(message);
+                const content = parsed.choices[0].delta.content;
+                if (content) {
+                  controller.enqueue(new TextEncoder().encode(content));
+                }
+              } catch (e) {
+                console.error('Error parsing OpenAI response:', e);
+              }
+            }
+          }
+        } catch (e) {
+          console.error('Error in streaming:', e);
+          controller.error(e);
+        }
+      },
     });
 
-    const completionResponse = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: (systemPrompt[chatbot as keyof typeof systemPrompt] + context) },
-          ...messages
-        ],
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache, no-transform',
+        Connection: 'keep-alive',
       },
-      {
-        headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    const aiResponse = completionResponse.data.choices[0].message.content;
-
-    return NextResponse.json({ response: aiResponse });
+    });
   } catch (error) {
     console.error('Detailed error in LLM generation:', error);
 
@@ -134,9 +189,15 @@ export async function POST(req: NextRequest) {
       errorMessage = error.message;
     }
 
-    return NextResponse.json({ 
-      error: errorMessage, 
-      details: error instanceof Error ? error.stack : 'Unknown error'
-    }, { status: statusCode });
+    return new Response(
+      JSON.stringify({
+        error: errorMessage,
+        details: error instanceof Error ? error.stack : 'Unknown error',
+      }),
+      {
+        status: statusCode,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 }
