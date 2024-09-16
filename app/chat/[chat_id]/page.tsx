@@ -446,7 +446,7 @@ export default function Page({ params: { chat_id } }: Props) {
         message = 'Can you be more specific?';
         break;
       case 'understand':
-        message = "I don't understand. Can you explain further?";
+        message = "I don&apos;t understand. Can you explain further?";
         break;
     }
     handleSendMessage(message);
