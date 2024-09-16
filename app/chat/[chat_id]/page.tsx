@@ -258,15 +258,6 @@ export default function Page({ params: { chat_id } }: Props) {
   const handleAskQuestion = async (message: string) => {
     if (message.trim()) {
       try {
-        toast.success('You are being redirected pls wait', {
-          position: "bottom-right",
-          autoClose: 2000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
         const chatId = uuidv4();
         const { data, error } = await supabase
           .from("chat")
@@ -280,7 +271,6 @@ export default function Page({ params: { chat_id } }: Props) {
         console.log("error", error);
       }
     }
-    // handleSendMessage(question);
   };
 
   const handleShare = (chatId: string) => {
