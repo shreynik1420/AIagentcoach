@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  MessageCircle
+  ExternalLink,
+  HelpCircle,
+  MessageCircle,
+  MoreHorizontal
 } from "lucide-react";
 
 import { useAuth, useClerk } from "@clerk/nextjs";
@@ -31,7 +34,14 @@ export function Page() {
   const supabaseUrl = "https://cfkdwcrvjjpprhbmzzxz.supabase.co";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY || "";
   const supabase = createClient(supabaseUrl, supabaseKey);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      const scrollHeight = scrollAreaRef.current.scrollHeight;
+      scrollAreaRef.current.scrollTop = scrollHeight * 0.2; // Scroll to 20% of the content
+    }
+  }, [currentExpert]);
 
   useEffect(() => {
     
@@ -95,6 +105,10 @@ export function Page() {
     setInputValue((prev) => `${prev} ${transcribedText}`);
   };
 
+  function handleActionClick(arg0: string): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-white">
 
@@ -111,7 +125,7 @@ export function Page() {
 
           {/* Main Chat Area */}
           <div className="flex-1 flex flex-col bg-gray-900 overflow-hidden">
-            <ScrollArea className="flex-1">
+            <ScrollArea className="flex-1" ref={scrollAreaRef}>
               <div className="p-4 space-y-4 min-h-[calc(100vh-12rem)]">
 
                   <div className="pt-8">
@@ -124,6 +138,29 @@ export function Page() {
             </ScrollArea>
 
             <div className="border-t border-gray-700 p-4">
+              <div className="action-buttons flex justify-center space-x-4 mb-6">
+                <button 
+                  onClick={() => handleActionClick('examples')}
+                  className="bg-gray-700 text-gray-200 px-3 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-2"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  <span>Give me examples</span>
+                </button>
+                <button 
+                  onClick={() => handleActionClick('specific')}
+                  className="bg-gray-700 text-gray-200 px-3 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-2"
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                  <span>Be more specific</span>
+                </button>
+                <button 
+                  onClick={() => handleActionClick('understand')}
+                  className="bg-gray-700 text-gray-200 px-3 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-2"
+                >
+                  <HelpCircle className="h-4 w-4" />
+                  <span>I don't understand</span>
+                </button>
+              </div>
               <form onSubmit={handleFormSubmit} className="flex space-x-2">
                 <Input
                   className="flex-1 bg-gray-800 text-white border-gray-700 focus:border-blue-400"

@@ -25,7 +25,7 @@ const TopicIntroduction: React.FC<{
  }> = ({ topic, onAskQuestion }) => {
    const topicData = {
      General: {
-       icon: <Brain className="w-12 h-12 md:w-16 md:h-16" />,
+       icon: <Brain className="w-14 h-14 md:w-18 md:h-18" />,
        description: 'Your personal AI Coach for various aspects of professional and personal development.',
        questions: [
          { icon: <HelpCircle />, text: 'How can AI real estate coaching benefit me?' },
@@ -89,14 +89,14 @@ const TopicIntroduction: React.FC<{
    const data = topicData[topic];
 
    return (
-     <div className="flex flex-col items-center justify-center space-y-6 md:space-y-8 max-w-2xl mx-auto mb-8 px-4">
+     <div className="flex flex-col items-center justify-center space-y-5 max-w-2xl mx-auto mb-7 px-4">
        <div className="text-blue-400">{data.icon}</div>
-       <h2 className="text-xl md:text-2xl font-bold text-white text-center">{topic}</h2>
-       <p className="text-center text-gray-300 text-sm md:text-base">{data.description}</p>
-       <p className="text-center text-gray-300 text-sm md:text-base">
+       <h2 className="text-xl font-bold text-white text-center">{topic}</h2>
+       <p className="text-center text-gray-300 text-sm">{data.description}</p>
+       <p className="text-center text-gray-300 text-sm">
          Click one of the sample questions below or type your own question!
        </p>
-       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
          {data.questions.map((question, index) => (
            <Card
              key={index}
@@ -104,7 +104,7 @@ const TopicIntroduction: React.FC<{
              onClick={() => onAskQuestion(question.text)}
            >
              <CardContent className="flex items-start p-4">
-               <div className="mr-4 mt-1 text-blue-400">{question.icon}</div>
+               <div className="mr-3 mt-1 text-blue-400">{question.icon}</div>
                <p className="text-sm text-gray-300">{question.text}</p>
              </CardContent>
            </Card>
