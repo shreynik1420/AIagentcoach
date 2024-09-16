@@ -61,7 +61,6 @@ type Props = {
   };
 };
 
-
 type ExpertType = 'General' | 'Real Estate' | 'Sales' | 'Marketing' | 'Negotiation' | 'Motivation';
 
 
@@ -96,7 +95,6 @@ export default function Page({ params: { chat_id } }: Props) {
         .select()
         .eq("chat_id", chat_id)
         .eq("user_id", userId);
-
 
       if (messages) {
         const sortedMessages = messages.sort((a, b) => {
@@ -245,7 +243,6 @@ export default function Page({ params: { chat_id } }: Props) {
       }
     }
   };
-  
 
 
 
@@ -292,7 +289,8 @@ export default function Page({ params: { chat_id } }: Props) {
       console.error('Failed to copy: ', err);
     });
   };
-  
+
+
 
   const getAIAvatar = (expert: ExpertType) => {
     let IconComponent;
