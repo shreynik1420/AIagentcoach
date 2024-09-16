@@ -260,7 +260,7 @@ export async function POST(req: NextRequest) {
           let buffer = '';
           response.data.on('data', (chunk: Buffer) => {
             buffer += chunk.toString();
-            let boundary = buffer.lastIndexOf('\n');
+            const boundary = buffer.lastIndexOf('\n');
             if (boundary !== -1) {
               const completeData = buffer.substring(0, boundary);
               buffer = buffer.substring(boundary + 1);
