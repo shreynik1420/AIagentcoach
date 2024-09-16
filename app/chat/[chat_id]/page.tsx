@@ -130,7 +130,7 @@ export default function Page({ params: { chat_id } }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isSending, setIsSending] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  let newRoute = false;
+  const newRouteRef = useRef('');
   const [currentExpert, setCurrentExpert] = useState<ExpertType>("General");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -144,8 +144,8 @@ export default function Page({ params: { chat_id } }: Props) {
 
   useEffect(() => {
     if (Boolean(searchParam.get("new")) ) {
-      if(newRoute) return;
-      newRoute=true;
+      if(newRouteRef.current) return;
+      newRouteRef.current = "true";
       handleSendMessage(searchParam.get("ques") || "");
       router.replace(`/chat/${chat_id}`, undefined);
       return;
@@ -584,7 +584,7 @@ export default function Page({ params: { chat_id } }: Props) {
                   className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
                 >
                   <HelpCircle className="h-3.5 w-3.5" />
-                  <span>I don't understand</span>
+                  <span>I don&apos;t understand</span>
                 </button>
               </div>
               <form onSubmit={handleFormSubmit} className="flex space-x-2">
