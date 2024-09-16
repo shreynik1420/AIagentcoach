@@ -36,6 +36,8 @@ import {
   TargetIcon,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth, SignedIn, SignedOut, useClerk } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -67,6 +69,62 @@ type Props = {
 
 type ExpertType = 'General' | 'Real Estate' | 'Sales' | 'Marketing' | 'Negotiation' | 'Motivation';
 
+function formatTables(content: string): string {
+  // Check if the content is already in HTML format
+  if (content.includes('<tr>') && content.includes('<td')) {
+    const tableHtml = `
+      <table class="border-collapse table-auto w-full text-sm my-4">
+        <thead>
+          <tr class="bg-gray-800">
+            ${content.match(/<td[^>]*>(.*?)<\/td>/g)?.map(cell => 
+              `<th class="border-b border-gray-700 font-medium p-4 pl-8 pt-0 pb-3 text-gray-300 text-left">${cell.replace(/<\/?td[^>]*>/g, '')}</th>`
+            ).join('') || ''}
+          </tr>
+        </thead>
+        <tbody class="bg-gray-700">
+          ${content}
+        </tbody>
+      </table>
+    `;
+    return `<custom-table>${tableHtml}</custom-table>`;
+  }
+
+  // Original markdown table handling
+  const tableRegex = /^\s*\|.*\|.*\n\s*\|.*\|.*\n(\s*\|.*\|.*\n)+/gm;
+  return content.replace(tableRegex, (match) => {
+    const rows = match.trim().split('\n');
+    const headers = rows[0].split('|').filter(Boolean).map(h => h.trim());
+    const alignments = rows[1].split('|').filter(Boolean).map(a => {
+      if (a.startsWith(':') && a.endsWith(':')) return 'center';
+      if (a.endsWith(':')) return 'right';
+      return 'left';
+    });
+    const body = rows.slice(2).map(row => row.split('|').filter(Boolean).map(cell => cell.trim()));
+
+    const tableHtml = `<table class="border-collapse table-auto w-full text-sm my-4">
+      <thead>
+        <tr class="bg-gray-800">
+          ${headers.map((header, i) => `<th class="border-b border-gray-700 font-medium p-4 pl-8 pt-0 pb-3 text-gray-300 text-${alignments[i]} text-left">${header}</th>`).join('')}
+        </tr>
+      </thead>
+      <tbody class="bg-gray-700">
+        ${body.map(row => `
+          <tr>
+            ${row.map((cell, i) => `<td class="border-b border-gray-600 p-4 pl-8 text-gray-200 text-${alignments[i]}">${cell}</td>`).join('')}
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+
+    return `<custom-table>${tableHtml}</custom-table>`;
+  });
+}
+
+function parseCustomTags(content: string): string {
+  return content.replace(/<custom-table>([\s\S]*?)<\/custom-table>/g, (_, tableContent) => {
+    return `<div class="my-4 overflow-x-auto">${tableContent}</div>`;
+  });
+}
 
 export default function Page({ params: { chat_id } }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -448,26 +506,19 @@ export default function Page({ params: { chat_id } }: Props) {
                         }`}>
                         <ReactMarkdown
                           components={{
-                            p: ({ node, ...props }) => (
-                              <p className="mb-2" {...props} />
+                            p: ({ node, ...props }) => <p className="mb-2" {...props} />,
+                            ul: ({ node, ...props }) => <ul className="list-disc pl-4 mb-2" {...props} />,
+                            ol: ({ node, ...props }) => <ol className="list-decimal pl-4 mb-2" {...props} />,
+                            li: ({ node, ...props }) => node && <li className="mb-1" {...props} />,
+                            strong: ({ node, ...props }) => node && <strong className="font-bold" {...props} />,
+                            table: ({ node, ...props }) => (
+                              <div className="my-4 overflow-x-auto" dangerouslySetInnerHTML={{ __html: props.children?.toString() || '' }} />
                             ),
-                            ul: ({ node, ...props }) => (
-                              <ul className="list-disc pl-4 mb-2" {...props} />
-                            ),
-                            ol: ({ node, ...props }) => (
-                              <ol
-                                className="list-decimal pl-4 mb-2"
-                                {...props}
-                              />
-                            ),
-                            li: ({ node, ...props }) => (
-                              <li className="mb-1" {...props} />
-                            ),
-                            strong: ({ node, ...props }) => (
-                              <strong className="font-bold" {...props} />
-                            ),
-                          }}>
-                          {message.content}
+                          }}
+                          remarkPlugins={[remarkGfm]}
+                          rehypePlugins={[rehypeRaw]}
+                        >
+                          {parseCustomTags(formatTables(message.content))}
                         </ReactMarkdown>
                       </div>
                       {message.role === "assistant" && (
