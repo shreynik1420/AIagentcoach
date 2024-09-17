@@ -143,6 +143,7 @@ export default function Page({ params: { chat_id } }: Props) {
   const searchParam = useSearchParams();
   const { user } = useUser();
   const userEmail = user?.emailAddresses[0]?.emailAddress;
+  const [placeholder, setPlaceholder] = useState(`Ask me any question about ${currentExpert.toLowerCase()}! Just type or use the microphone.`);
 
   useEffect(() => {
     if (Boolean(searchParam.get("new")) ) {
@@ -304,6 +305,8 @@ export default function Page({ params: { chat_id } }: Props) {
       } finally {
         // Reset sending state
         setIsSending(false);
+        setInputValue("");
+        setPlaceholder(`Ask me any question about ${currentExpert.toLowerCase()}! Just type or use the microphone.`);
       }
     }
   };
@@ -739,7 +742,7 @@ export default function Page({ params: { chat_id } }: Props) {
               <form onSubmit={handleFormSubmit} className="flex space-x-2">
                 <Input
                   className="flex-1 bg-gray-800 text-white border-gray-700 focus:border-blue-400"
-                  placeholder="Write a message..."
+                  placeholder={placeholder}
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                 />
