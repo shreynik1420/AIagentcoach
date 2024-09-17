@@ -189,7 +189,7 @@ export function Page() {
               <form onSubmit={handleFormSubmit} className="flex space-x-2">
                 <Input
                   className="flex-1 bg-gray-800 text-white border-gray-700 focus:border-blue-400"
-                  placeholder="Write a message..."
+                  placeholder={`Ask me any question about ${currentExpert.toLowerCase()}! Just type or use the microphone.`}
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                 />
