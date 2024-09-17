@@ -222,7 +222,6 @@ export async function POST(req: NextRequest) {
                 stream: true,
                 temperature: 0.6, // Adjusted temperature
                 top_p: 0.7,  
-                max_tokens: 200,    // Adjusted top_p
               },
               {
                 headers: {
