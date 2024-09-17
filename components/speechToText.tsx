@@ -19,6 +19,21 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({ onTranscribe }) => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (mediaRecorderRef.current) {
+        mediaRecorderRef.current.stop();
+      }
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
 
   const transcribeAudio = async (file: File) => {
     const formData = new FormData();
@@ -47,6 +62,7 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({ onTranscribe }) => {
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
@@ -71,6 +87,11 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({ onTranscribe }) => {
         setShowModal(false); // Hide modal after transcription
         clearInterval(timerRef.current!); // Stop the timer
         setTimeElapsed(0); // Reset the timer
+
+        // Stop all tracks of the stream
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
+        }
       };
 
       mediaRecorder.start();
@@ -110,13 +131,21 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({ onTranscribe }) => {
       {/* Modal that shows while recording */}
       {showModal && (
         <Modal onClose={() => setShowModal(false)} open={showModal}>
-          <div className="flex flex-col items-center bg-gray-100 text-gray-900 p-6 rounded-lg">
-            {isListening && <p>Recording... Speak Now</p>}
-            <p className="text-lg font-bold">{formatTime(timeElapsed)}</p> {/* Display timer */}
-            {isProcessing && <Spinner />} {/* Show processing indicator */}
+          <div className="flex flex-col items-center bg-gray-900 text-white p-6 rounded-lg shadow-lg">
+            <div className="w-12 h-12 mb-4 relative">
+              <div className="absolute inset-0 bg-blue-500 rounded-full opacity-25 animate-ping"></div>
+              <div className="relative flex items-center justify-center w-full h-full bg-blue-500 rounded-full">
+                <Mic className="h-6 w-6 text-white" />
+              </div>
+            </div>
+            <p className="text-lg font-semibold mb-2">{formatTime(timeElapsed)}</p>
+            {isProcessing && <Spinner />}
             {isListening && (
-              <Button onClick={stopRecording} className="mt-4">
-                <StopCircle className="h-6 w-6" /> Stop
+              <Button 
+                onClick={stopRecording} 
+                className="mt-4 bg-transparent border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors duration-300"
+              >
+                Stop
               </Button>
             )}
           </div>
