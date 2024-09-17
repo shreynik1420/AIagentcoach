@@ -129,10 +129,10 @@ async function determineModel(question: string): Promise<string> {
     if (answer.includes('requires real-time data')) {
       return 'llama-3.1-sonar-small-128k-online';
     } else if (answer.includes('does not require real-time data')) {
-      return 'llama-3.1-70b-instruct';
+      return 'llama-3.1-8b-instruct';
     } else {
-      // Default to 'llama-3.1-70b-instruct' if unsure
-      return 'llama-3.1-70b-instruct';
+      // Default to 'llama-3.1-8b-instruct' if unsure
+      return 'llama-3.1-8b-instruct';
     }
   } catch (error) {
     console.error('Error in determineModel:', error);
@@ -141,8 +141,8 @@ async function determineModel(question: string): Promise<string> {
       console.error('Response data:', error.response.data);
     }
 
-    // Default to 'llama-3.1-70b-instruct' in case of error
-    return 'llama-3.1-70b-instruct';
+    // Default to 'llama-3.1-8b-instruct' in case of error
+    return 'llama-3.1-8b-instruct';
   }
 }
 
