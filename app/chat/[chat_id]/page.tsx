@@ -32,6 +32,7 @@ import {
   Home,
   BookCheck,
   TargetIcon,
+  Share,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm';
@@ -49,6 +50,7 @@ import ChatSidebar from "@/components/chatSideBar";
 import HeaderBar from "@/components/header";
 import TopicIntroduction from "@/components/topicIntroduction";
 import SpeechToText from "@/components/speechToText";
+import { useUser } from "@clerk/nextjs";
 
 type Message = {
   role: "user" | "assistant" | "system";
@@ -139,6 +141,8 @@ export default function Page({ params: { chat_id } }: Props) {
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY || "";
   const supabase = createClient(supabaseUrl, supabaseKey);
   const searchParam = useSearchParams();
+  const { user } = useUser();
+  const userEmail = user?.emailAddresses[0]?.emailAddress;
 
   useEffect(() => {
     if (Boolean(searchParam.get("new")) ) {
@@ -330,25 +334,40 @@ export default function Page({ params: { chat_id } }: Props) {
     }
   };
 
-  const handleShare = (chatId: string) => {
-    const shareUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/chat/${chatId}`;
-    
-    // Copy the full response to clipboard
-    const fullResponse = messages.map(msg => msg.content).join('\n');
+  const handleShare = async (content: string) => {
+    try {
+      const response = await fetch('/api/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content }),
+      });
 
-    navigator.clipboard.writeText(fullResponse).then(() => {
-      toast.success('Copied to clipboard!', {
+      if (response.ok) {
+        const { email } = await response.json();
+        toast.success(`Message sent to your email: ${email}`, {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      } else {
+        throw new Error('Failed to send email');
+      }
+    } catch (error) {
+      console.error('Error sharing message:', error);
+      toast.error('Failed to send email. Please try again later.', {
         position: "bottom-right",
-        autoClose: 2000,
-        hideProgressBar: true,
+        autoClose: 3000,
+        hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
       });
-    }).catch(err => {
-      console.error('Failed to copy: ', err);
-    });
+    }
   };
 
 
@@ -396,20 +415,20 @@ export default function Page({ params: { chat_id } }: Props) {
     );
     
     if (likeValue === 1) {
-      toast.success('You liked this message!', {
+      toast.success('Message liked successfully', {
         position: "bottom-right",
-        autoClose: 2000,
-        hideProgressBar: true,
+        autoClose: 3000,
+        hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
       });
     } else if (likeValue === -1) {
-      toast.error('You disliked this message!', {
+      toast.error('Message disliked', {
         position: "bottom-right",
-        autoClose: 2000,
-        hideProgressBar: true,
+        autoClose: 3000,
+        hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -425,6 +444,32 @@ export default function Page({ params: { chat_id } }: Props) {
       console.error("Error updating like value:", error);
     }
   };
+
+  const handleCopyToClipboard = (content: string) => {
+    navigator.clipboard.writeText(content).then(() => {
+      toast.info('Message copied to clipboard', {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }).catch((err) => {
+      console.error('Failed to copy: ', err);
+      toast.error('Failed to copy to clipboard', {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    });
+  };
+
   const handleExpertClick = (expert: ExpertType) => {
     setCurrentExpert(expert);
     setMessages([]);
@@ -547,10 +592,18 @@ export default function Page({ params: { chat_id } }: Props) {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => handleShare(chat_id)}
+                            onClick={() => handleCopyToClipboard(message.content)}
                             className="text-gray-400 hover:text-white hover:bg-gray-800"
                           >
                             <Copy className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleShare(message.content)}
+                            className="text-gray-400 hover:text-white hover:bg-gray-800"
+                          >
+                            <Share className="h-4 w-4" />
                           </Button>
                         </div>
                       )}
@@ -610,6 +663,7 @@ export default function Page({ params: { chat_id } }: Props) {
           </div>
         </div>
       </SignedIn>
+      <ToastContainer />
     </div>
   );
 }
