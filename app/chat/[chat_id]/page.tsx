@@ -379,26 +379,24 @@ export default function Page({ params: { chat_id } }: Props) {
 
     // Format each paragraph
     const formattedParagraphs = paragraphs.map(paragraph => {
-      // Check if it's a header (starts with # or ##)
-      if (paragraph.startsWith('# ') || paragraph.startsWith('## ')) {
-        const level = paragraph.startsWith('# ') ? 'h1' : 'h2';
-        const text = paragraph.replace(/^#+ /, '');
-        return `<${level} style="color: #333; font-size: ${level === 'h1' ? '24px' : '20px'}; margin-top: 20px; margin-bottom: 10px;">${text}</${level}>`;
+      // Check if it's a header (starts with **)
+      if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
+        return `<h2 style="color: #333; font-size: 20px; margin-top: 25px; margin-bottom: 15px; font-weight: bold;">${paragraph.replace(/\*\*/g, '')}</h2>`;
       }
 
       // Check if it's a list
       if (paragraph.includes('\n- ')) {
         const listItems = paragraph.split('\n- ').filter(item => item.trim());
-        return `<ul style="list-style-type: disc; padding-left: 20px; margin-bottom: 15px;">
-          ${listItems.map(item => `<li style="margin-bottom: 5px;">${item.trim()}</li>`).join('')}
+        return `<ul style="margin-bottom: 20px; padding-left: 20px;">
+          ${listItems.map(item => `<li style="margin-bottom: 10px; line-height: 1.6;">${item.trim()}</li>`).join('')}
         </ul>`;
       }
 
       // Check if it's a numbered list
       if (paragraph.match(/^\d+\./)) {
         const listItems = paragraph.split('\n').filter(item => item.trim());
-        return `<ol style="list-style-type: decimal; padding-left: 20px; margin-bottom: 15px;">
-          ${listItems.map(item => `<li style="margin-bottom: 5px;">${item.replace(/^\d+\.\s*/, '')}</li>`).join('')}
+        return `<ol style="margin-bottom: 20px; padding-left: 20px;">
+          ${listItems.map(item => `<li style="margin-bottom: 10px; line-height: 1.6;">${item.replace(/^\d+\.\s*/, '')}</li>`).join('')}
         </ol>`;
       }
 
@@ -409,10 +407,12 @@ export default function Page({ params: { chat_id } }: Props) {
     // Join all formatted paragraphs
     const formattedContent = formattedParagraphs.join('');
 
-    // Wrap the content in a div with some basic styling
+    // Wrap the content in a div with improved styling
     return `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; color: #333; background-color: #f9f9f9; border-radius: 10px;">
+        <h1 style="color: #2c3e50; font-size: 24px; margin-bottom: 20px; text-align: center;">Message from AgentCoach.ai</h1>
         ${formattedContent}
+        <p style="font-size: 12px; color: #777; text-align: center; margin-top: 30px;">© 2024 AgentCoach.ai. All rights reserved.</p>
       </div>
     `;
   };
