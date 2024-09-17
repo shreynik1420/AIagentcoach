@@ -147,10 +147,10 @@ async function determineModel(question: string): Promise<string> {
     if (answer.includes('requires real-time data')) {
       return 'llama-3.1-sonar-small-128k-online';
     } else if (answer.includes('does not require real-time data')) {
-      return 'llama-3.1-sonar-large-128k-chat';
+      return 'llama-3.1-70b-instruct';
     } else {
-      // Default to 'llama-3.1-sonar-large-128k-chat' if unsure
-      return 'llama-3.1-sonar-large-128k-chat';
+      // Default to 'llama-3.1-70b-instruct' if unsure
+      return 'llama-3.1-70b-instruct';
     }
   } catch (error) {
     console.error('Error in determineModel:', error);
@@ -159,31 +159,54 @@ async function determineModel(question: string): Promise<string> {
       console.error('Response data:', error.response.data);
     }
 
-    // Default to 'llama-3.1-sonar-large-128k-chat' in case of error
-    return 'llama-3.1-sonar-large-128k-chat';
+    // Default to 'llama-3.1-70b-instruct' in case of error
+    return 'llama-3.1-70b-instruct';
   }
 }
 
 // Function to ensure the first sentence has proper punctuation
 function ensureFirstSentencePunctuation(text: string): string {
-  const match = text.match(/^(.+?[.?!])(\s|$)/);
+  // List of common interjections
+  const interjections = [
+    'Yes', 'No', 'Okay', 'Sure', 'Certainly', 'Absolutely', 'Indeed', 'Alright', 'Well',
+    'Actually', 'Basically', 'Clearly', 'Honestly', 'Interestingly', 'Naturally', 'Obviously',
+    'Of course', 'Surely', 'Undoubtedly', 'Unfortunately', 'Fortunately', 'Surprisingly',
+  ];
+
+  // Trim leading whitespace
+  text = text.trimStart();
+
+  // Regular expression to match interjections at the beginning
+  const interjectionRegex = new RegExp(`^(${interjections.join('|')})(\\b)(\\s*)([^.?!])`, 'i');
+
+  // Check if text starts with a common interjection not followed by punctuation
+  if (interjectionRegex.test(text)) {
+    text = text.replace(interjectionRegex, (match, p1, p2, p3, p4) => {
+      return `${p1}${p2}.${p3}${p4}`;
+    });
+  }
+
+  // Regular expression to match the first sentence ending with punctuation
+  const sentenceEndRegex = /^([\s\S]+?[.?!])(\s|$|[\r\n])/;
+  const match = text.match(sentenceEndRegex);
+
   if (match) {
+    // First sentence ends with proper punctuation
     return text;
   } else {
-    const firstSentenceEndIndex = text.indexOf(' ');
-    if (firstSentenceEndIndex !== -1) {
-      const firstSentence = text.substring(0, firstSentenceEndIndex);
-      if (!/[.?!]$/.test(firstSentence)) {
-        const correctedFirstSentence = firstSentence + '.';
-        return correctedFirstSentence + text.substring(firstSentenceEndIndex);
-      }
-    } else {
-      if (!/[.?!]$/.test(text)) {
-        return text + '.';
-      }
+    // No punctuation found in the first sentence
+    // Find the end of the first sentence (newline or end of text)
+    const firstSentenceEndIndex = text.search(/[\r\n]/) !== -1 ? text.search(/[\r\n]/) : text.length;
+    let firstSentence = text.substring(0, firstSentenceEndIndex).trimEnd();
+
+    // Ensure the first sentence ends with a period, question mark, or exclamation point
+    if (!/[.?!]$/.test(firstSentence)) {
+      firstSentence += '.';
     }
+
+    const restOfText = text.substring(firstSentenceEndIndex);
+    return firstSentence + restOfText;
   }
-  return text;
 }
 
 export async function POST(req: NextRequest) {
