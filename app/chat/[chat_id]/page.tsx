@@ -492,6 +492,9 @@ export default function Page({ params: { chat_id } }: Props) {
       case 'understand':
         message = "I don&apos;t understand. Can you explain further?";
         break;
+      case 'continue':
+        message = "Continue with the conversation.";
+        break;
     }
     handleSendMessage(message);
   };
@@ -637,7 +640,14 @@ export default function Page({ params: { chat_id } }: Props) {
                   className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
                 >
                   <HelpCircle className="h-3.5 w-3.5" />
-                  <span>I don&apos;t understand</span>
+                  <span>I don't understand</span>
+                </button>
+                <button 
+                  onClick={() => handleActionClick('continue')}
+                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
+                >
+                  <ArrowRight className="h-3.5 w-3.5" />
+                  <span>Continue</span>
                 </button>
               </div>
               <form onSubmit={handleFormSubmit} className="flex space-x-2">

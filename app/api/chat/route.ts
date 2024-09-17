@@ -239,8 +239,9 @@ export async function POST(req: NextRequest) {
                 model: selectedModel,
                 messages: messagesForAPI,
                 stream: true,
-                temperature: 0.5, // Adjusted temperature
-                top_p: 0.95,      // Adjusted top_p
+                temperature: 0.9, // Adjusted temperature
+                top_p: 0.95,  
+                max_tokens: 1000,    // Adjusted top_p
               },
               {
                 headers: {

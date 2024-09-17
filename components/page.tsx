@@ -8,7 +8,10 @@ import {
   ExternalLink,
   HelpCircle,
   MessageCircle,
-  MoreHorizontal
+  MoreHorizontal,
+  ArrowRight,
+  BookCheck,
+  TargetIcon
 } from "lucide-react";
 
 import { useAuth, useClerk } from "@clerk/nextjs";
@@ -105,8 +108,23 @@ export function Page() {
     setInputValue((prev) => `${prev} ${transcribedText}`);
   };
 
-  function handleActionClick(arg0: string): void {
-    throw new Error("Function not implemented.");
+  function handleActionClick(action: string): void {
+    switch (action) {
+      case 'examples':
+        // Handle examples action
+        break;
+      case 'specific':
+        // Handle specific action
+        break;
+      case 'understand':
+        // Handle understand action
+        break;
+      case 'continue':
+        // Handle continue action
+        break;
+      default:
+        console.log('Unknown action:', action);
+    }
   }
 
   return (
@@ -138,27 +156,34 @@ export function Page() {
             </ScrollArea>
 
             <div className="border-t border-gray-700 p-4">
-              <div className="action-buttons flex justify-center space-x-4 mb-6">
+              <div className="action-buttons flex justify-center space-x-4 mb-5">
                 <button 
                   onClick={() => handleActionClick('examples')}
-                  className="bg-gray-700 text-gray-200 px-3 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-2"
+                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
                 >
-                  <ExternalLink className="h-4 w-4" />
+                  <BookCheck className="h-3.5 w-3.5" />
                   <span>Give me examples</span>
                 </button>
                 <button 
                   onClick={() => handleActionClick('specific')}
-                  className="bg-gray-700 text-gray-200 px-3 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-2"
+                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
                 >
-                  <MoreHorizontal className="h-4 w-4" />
+                  <TargetIcon className="h-3.5 w-3.5" />
                   <span>Be more specific</span>
                 </button>
                 <button 
                   onClick={() => handleActionClick('understand')}
-                  className="bg-gray-700 text-gray-200 px-3 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-2"
+                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
                 >
-                  <HelpCircle className="h-4 w-4" />
+                  <HelpCircle className="h-3.5 w-3.5" />
                   <span>I don't understand</span>
+                </button>
+                <button 
+                  onClick={() => handleActionClick('continue')}
+                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
+                >
+                  <ArrowRight className="h-3.5 w-3.5" />
+                  <span>Continue</span>
                 </button>
               </div>
               <form onSubmit={handleFormSubmit} className="flex space-x-2">
