@@ -17,27 +17,19 @@ export default function ChatPage() {
     setIsMobile(isMobileDevice);
   }, []);
 
+  if (isMobile) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-95 z-50">
+        <div className="bg-gray-800 text-white rounded-xl shadow-lg p-6 w-full max-w-md mx-4">
+          <h2 className="text-xl font-semibold mb-4 text-center">Mobile Access Unavailable</h2>
+          <p className="text-gray-300 text-center mb-6">We apologize, but this site is currently only available on desktop devices. Please access it from a laptop or desktop computer for the best experience.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
-      {/* Show popup if mobile is detected */}
-      {isMobile && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-95 z-50">
-          <div className="bg-gray-800 text-white rounded-xl shadow-lg p-6 w-full max-w-md mx-4 transform transition-transform duration-300 scale-100 hover:scale-105">
-            <h2 className="text-xl font-semibold mb-4 text-center">Best Experience on Desktop</h2>
-            <p className="text-gray-300 text-center mb-6">This site is optimized for laptop or desktop usage. Please consider switching to a larger screen for the best experience.</p>
-            <div className="flex justify-center">
-              <Button
-                onClick={() => setIsMobile(false)}
-                className="bg-blue-500 text-white py-2 px-4 rounded-full shadow-lg hover:shadow-2xl transform transition-transform duration-200 hover:scale-105"
-              >
-                Continue Anyway
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-
       <SignedIn>
         <Page />
       </SignedIn>
