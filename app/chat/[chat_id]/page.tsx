@@ -336,10 +336,13 @@ export default function Page({ params: { chat_id } }: Props) {
 
   const handleShare = async (content: string) => {
     try {
+      // Format the content
+      const formattedContent = formatEmailContent(content);
+
       const response = await fetch('/api/share', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ content: formattedContent }),
       });
 
       if (response.ok) {
@@ -370,7 +373,38 @@ export default function Page({ params: { chat_id } }: Props) {
     }
   };
 
+  const formatEmailContent = (content: string) => {
+    // Split content into paragraphs
+    const paragraphs = content.split('\n\n');
 
+    // Format each paragraph
+    const formattedParagraphs = paragraphs.map(paragraph => {
+      // Check if it's a header (starts with **)
+      if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
+        return `<h2 style="color: #333; font-size: 18px; margin-top: 20px; margin-bottom: 10px;">${paragraph.replace(/\*\*/g, '')}</h2>`;
+      }
+
+      // Check if it's a list
+      if (paragraph.includes('* ')) {
+        const listItems = paragraph.split('* ').filter(item => item.trim() !== '');
+        return `<ul style="margin-bottom: 15px; padding-left: 20px;">
+          ${listItems.map(item => `<li style="margin-bottom: 5px;">${item.trim()}</li>`).join('')}
+        </ul>`;
+      }
+
+      // Regular paragraph
+      return `<p style="margin-bottom: 15px; line-height: 1.5;">${paragraph}</p>`;
+    });
+
+    // Combine all formatted paragraphs
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+        ${formattedParagraphs.join('')}
+      </div>
+    `;
+
+    return htmlContent;
+  };
 
   const getAIAvatar = (expert: ExpertType) => {
     let IconComponent;
@@ -570,44 +604,66 @@ export default function Page({ params: { chat_id } }: Props) {
                       </div>
                       {message.role === "assistant" && (
                         <div className="flex space-x-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleLike(message.message_id, 1)}
-                            className={`${
-                              message.like === 1
-                                ? "text-blue-400"
-                                : "text-gray-400 hover:text-white hover:bg-gray-800"
-                            }`}>
-                            <ThumbsUp className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleLike(message.message_id, -1)}
-                            className={`${
-                              message.like === -1
-                                ? "text-red-400"
-                                : "text-gray-400 hover:text-white hover:bg-gray-800"
-                            }`}>
-                            <ThumbsDown className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleCopyToClipboard(message.content)}
-                            className="text-gray-400 hover:text-white hover:bg-gray-800"
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleShare(message.content)}
-                            className="text-gray-400 hover:text-white hover:bg-gray-800"
-                          >
-                            <Share className="h-4 w-4" />
-                          </Button>
+                          <div className="relative group">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleLike(message.message_id, 1)}
+                              className={`${
+                                message.like === 1
+                                  ? "text-blue-400"
+                                  : "text-gray-400 hover:text-white hover:bg-gray-800"
+                              }`}
+                            >
+                              <ThumbsUp className="h-4 w-4" />
+                            </Button>
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+                              Like this response
+                            </div>
+                          </div>
+                          <div className="relative group">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleLike(message.message_id, -1)}
+                              className={`${
+                                message.like === -1
+                                  ? "text-red-400"
+                                  : "text-gray-400 hover:text-white hover:bg-gray-800"
+                              }`}
+                            >
+                              <ThumbsDown className="h-4 w-4" />
+                            </Button>
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+                              Dislike this response
+                            </div>
+                          </div>
+                          <div className="relative group">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleCopyToClipboard(message.content)}
+                              className="text-gray-400 hover:text-white hover:bg-gray-800"
+                            >
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+                              Copy to clipboard
+                            </div>
+                          </div>
+                          <div className="relative group">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleShare(message.content)}
+                              className="text-gray-400 hover:text-white hover:bg-gray-800"
+                            >
+                              <Share className="h-4 w-4" />
+                            </Button>
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+                              Send this response to your email
+                            </div>
+                          </div>
                         </div>
                       )}
 
@@ -623,31 +679,47 @@ export default function Page({ params: { chat_id } }: Props) {
               <div className="action-buttons flex justify-center space-x-4 mb-5">
                 <button 
                   onClick={() => handleActionClick('examples')}
-                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
+                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5 relative group"
+                  title="Request specific examples related to the topic"
                 >
                   <BookCheck className="h-3.5 w-3.5" />
                   <span>Give me examples</span>
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+                    Request specific examples
+                  </div>
                 </button>
                 <button 
                   onClick={() => handleActionClick('specific')}
-                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
+                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5 relative group"
+                  title="Ask for more detailed information"
                 >
                   <TargetIcon className="h-3.5 w-3.5" />
                   <span>Be more specific</span>
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+                    Ask for more details
+                  </div>
                 </button>
                 <button 
                   onClick={() => handleActionClick('understand')}
-                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
+                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5 relative group"
+                  title="Request clarification on the topic"
                 >
                   <HelpCircle className="h-3.5 w-3.5" />
                   <span>I don't understand</span>
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+                    Request clarification
+                  </div>
                 </button>
                 <button 
                   onClick={() => handleActionClick('continue')}
-                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
+                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5 relative group"
+                  title="Continue the current conversation"
                 >
                   <ArrowRight className="h-3.5 w-3.5" />
                   <span>Continue</span>
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+                    Continue conversation
+                  </div>
                 </button>
               </div>
               <form onSubmit={handleFormSubmit} className="flex space-x-2">

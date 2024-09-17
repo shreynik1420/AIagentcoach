@@ -26,10 +26,10 @@ export async function POST(req: NextRequest) {
     // Send email using Resend
     try {
       await resend.emails.send({
-        from: 'aiagentcoach@teamlumio.ai', // Use this email for testing
+        from: 'aiagentcoach@teamlumio.ai',
         to: userEmail,
         subject: 'Shared Message from AgentCoach.ai',
-        html: `<p>${content}</p>`,
+        html: content, // Now we're sending the formatted HTML content
       });
     } catch (error) {
       console.error('Resend API error:', error);

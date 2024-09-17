@@ -159,31 +159,47 @@ export function Page() {
               <div className="action-buttons flex justify-center space-x-4 mb-5">
                 <button 
                   onClick={() => handleActionClick('examples')}
-                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
+                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5 relative group"
+                  title="Request specific examples related to the topic"
                 >
                   <BookCheck className="h-3.5 w-3.5" />
                   <span>Give me examples</span>
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+                    Request specific examples
+                  </div>
                 </button>
                 <button 
                   onClick={() => handleActionClick('specific')}
-                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
+                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5 relative group"
+                  title="Ask for more detailed information"
                 >
                   <TargetIcon className="h-3.5 w-3.5" />
                   <span>Be more specific</span>
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+                    Ask for more details
+                  </div>
                 </button>
                 <button 
                   onClick={() => handleActionClick('understand')}
-                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
+                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5 relative group"
+                  title="Request clarification on the topic"
                 >
                   <HelpCircle className="h-3.5 w-3.5" />
                   <span>I don't understand</span>
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+                    Request clarification
+                  </div>
                 </button>
                 <button 
                   onClick={() => handleActionClick('continue')}
-                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5"
+                  className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5 relative group"
+                  title="Continue the current conversation"
                 >
                   <ArrowRight className="h-3.5 w-3.5" />
                   <span>Continue</span>
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+                    Continue conversation
+                  </div>
                 </button>
               </div>
               <form onSubmit={handleFormSubmit} className="flex space-x-2">
