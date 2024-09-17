@@ -384,6 +384,9 @@ export default function Page({ params: { chat_id } }: Props) {
         return `<h2 style="color: #333; font-size: 20px; margin-top: 25px; margin-bottom: 15px; font-weight: bold;">${paragraph.replace(/\*\*/g, '')}</h2>`;
       }
 
+      // Make text between ** bold
+      paragraph = paragraph.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
       // Check if it's a list
       if (paragraph.includes('\n- ')) {
         const listItems = paragraph.split('\n- ').filter(item => item.trim());
