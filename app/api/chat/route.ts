@@ -25,7 +25,7 @@ const systemPrompt = {
 
     Your warm, friendly, and encouraging communication fosters an environment where questions are welcomed and learning is delightful. You follow up with thought-provoking questions or suggestions to deepen the conversation, ensuring it is interactive and enlightening. Your goal is to inspire, motivate, and equip professionals with the knowledge and confidence to excel.
     Please ensure that your responses include proper punctuation—including full stops, commas, exclamation points, and question marks—and maintain the intended formatting and structure.
-Add emojis if relevant. Always end first sentense with an emoji. 
+Add emojis if relevant. 
     Maintain a consistent tone and response format: enthusiastic, professional, approachable. You're crafting an experience that leaves a lasting, positive impact—not just providing information.`,
   
   real_estate: `
@@ -35,7 +35,7 @@ Add emojis if relevant. Always end first sentense with an emoji.
 
     You follow up with thought-provoking questions or suggestions to encourage deeper exploration, ensuring the conversation is interactive, personalized, and enlightening. Your goal is to inspire, motivate, and equip professionals with the knowledge and confidence to excel.
     Please ensure that your responses include proper punctuation—including full stops, commas, exclamation points, and question marks—and maintain the intended formatting and structure.
-Add emojis if relevant. Always end first sentense with an emoji. 
+Add emojis if relevant. 
     Maintain a consistent tone: enthusiastic, professional, approachable. You're crafting an experience that leaves a lasting, positive impact—not just providing information.`,
   
   sales: `
@@ -43,7 +43,7 @@ Add emojis if relevant. Always end first sentense with an emoji.
 
     Your warm, friendly, and encouraging communication fosters an environment where questions are welcomed and learning is delightful. You break down complex sales strategies into simple, actionable steps anyone can implement.
 
-    Add emojis if relevant. Always end first sentense with an emoji. You follow up with insightful questions or suggestions to enhance their sales prowess, ensuring the conversation is interactive, personalized, and enlightening. Your goal is to inspire, motivate, and equip professionals with the sales skills and confidence to excel.
+    Add emojis if relevant. You follow up with insightful questions or suggestions to enhance their sales prowess, ensuring the conversation is interactive, personalized, and enlightening. Your goal is to inspire, motivate, and equip professionals with the sales skills and confidence to excel.
     Please ensure that your responses include proper punctuation—including full stops, commas, exclamation points, and question marks—and maintain the intended formatting and structure.
 
     Maintain a consistent tone: enthusiastic, professional, approachable. You're crafting an experience that leaves a lasting, positive impact—not just providing information.`,
@@ -52,7 +52,7 @@ Add emojis if relevant. Always end first sentense with an emoji.
     As a brilliant real estate marketing maven, you master innovative strategies that amplify branding, boost lead generation, and maximize client engagement. You provide medium, detailed, immensely helpful answers that demystify complex marketing concepts, empowering novices to become marketing wizards. Your responses feature engaging storytelling, fun, relatable examples, and novice-friendly real estate jokes, making learning enjoyable and concepts clear.
 
     Your warm, friendly, and encouraging communication fosters an environment where questions are welcomed and learning is delightful. You translate sophisticated marketing tactics into simple, practical strategies anyone can apply.
-Add emojis if relevant. Always end first sentense with an emoji. 
+Add emojis if relevant. 
     You follow up with engaging questions or suggestions to delve deeper and tailor strategies to their needs, ensuring the conversation is interactive, personalized, and enlightening. Your goal is to inspire, motivate, and equip professionals with the marketing savvy they need to stand out.
     Please ensure that your responses include proper punctuation—including full stops, commas, exclamation points, and question marks—and maintain the intended formatting and structure.
 
@@ -60,7 +60,7 @@ Add emojis if relevant. Always end first sentense with an emoji.
   
   negotiation: `
     As the unrivaled grandmaster of real estate negotiation, you make the art of deal-making accessible. You provide medium, detailed, immensely helpful explanations that transform novices into confident negotiation ninjas. Your responses come alive with engaging storytelling, fun, relatable examples, and novice-friendly real estate jokes, making complex negotiation tactics easy to understand and apply.
-Add emojis if relevant. Always end first sentense with an emoji. 
+Add emojis if relevant. 
     Your warm, friendly, and encouraging communication fosters an environment where questions are welcomed and learning is delightful. You break down intricate negotiation strategies into clear, actionable steps anyone can follow.
 
     You follow up with practical exercises or suggestions to help hone their skills and gain confidence, ensuring the conversation is interactive, personalized, and enlightening. Your goal is to inspire, motivate, and equip professionals with the negotiation prowess they need to secure the best deals.
@@ -75,7 +75,7 @@ Add emojis if relevant. Always end first sentense with an emoji.
 
     You follow up with encouraging questions or suggestions to foster continuous growth and self-improvement, ensuring the conversation is interactive, personalized, and enlightening. Your goal is to empower professionals to believe in themselves, overcome hurdles, and achieve extraordinary success.
     Please ensure that your responses include proper punctuation—including full stops, commas, exclamation points, and question marks—and maintain the intended formatting and structure.
-Add emojis if relevant. Always end first sentense with an emoji. 
+Add emojis if relevant. 
     Maintain a consistent tone: enthusiastic, positive, approachable. You're igniting a fire that propels them toward their dreams—not just providing motivation.`,
 };
 
@@ -161,51 +161,6 @@ async function determineModel(question: string): Promise<string> {
 
     // Default to 'llama-3.1-70b-instruct' in case of error
     return 'llama-3.1-70b-instruct';
-  }
-}
-
-// Function to ensure the first sentence has proper punctuation
-function ensureFirstSentencePunctuation(text: string): string {
-  // List of common interjections
-  const interjections = [
-    'Yes', 'No', 'Okay', 'Sure', 'Certainly', 'Absolutely', 'Indeed', 'Alright', 'Well',
-    'Actually', 'Basically', 'Clearly', 'Honestly', 'Interestingly', 'Naturally', 'Obviously',
-    'Of course', 'Surely', 'Undoubtedly', 'Unfortunately', 'Fortunately', 'Surprisingly',
-  ];
-
-  // Trim leading whitespace
-  text = text.trimStart();
-
-  // Regular expression to match interjections at the beginning
-  const interjectionRegex = new RegExp(`^(${interjections.join('|')})(\\b)(\\s*)([^.?!])`, 'i');
-
-  // Check if text starts with a common interjection not followed by punctuation
-  if (interjectionRegex.test(text)) {
-    text = text.replace(interjectionRegex, (match, p1, p2, p3, p4) => {
-      return `${p1}${p2}.${p3}${p4}`;
-    });
-  }
-
-  // Regular expression to match the first sentence ending with punctuation
-  const sentenceEndRegex = /^([\s\S]+?[.?!])(\s|$|[\r\n])/;
-  const match = text.match(sentenceEndRegex);
-
-  if (match) {
-    // First sentence ends with proper punctuation
-    return text;
-  } else {
-    // No punctuation found in the first sentence
-    // Find the end of the first sentence (newline or end of text)
-    const firstSentenceEndIndex = text.search(/[\r\n]/) !== -1 ? text.search(/[\r\n]/) : text.length;
-    let firstSentence = text.substring(0, firstSentenceEndIndex).trimEnd();
-
-    // Ensure the first sentence ends with a period, question mark, or exclamation point
-    if (!/[.?!]$/.test(firstSentence)) {
-      firstSentence += '.';
-    }
-
-    const restOfText = text.substring(firstSentenceEndIndex);
-    return firstSentence + restOfText;
   }
 }
 
@@ -298,25 +253,17 @@ export async function POST(req: NextRequest) {
 
             let fullText = '';
             let buffer = '';
-            let firstSentenceComplete = false;
-            let firstSentence = '';
-            const FIRST_SENTENCE_CHAR_LIMIT = 200; // New character limit
 
             response.data.on('data', (chunk: Buffer) => {
               buffer += chunk.toString();
 
               let lines = buffer.split('\n');
-              buffer = lines.pop() || ''; // Keep incomplete line in buffer
+              buffer = lines.pop() || '';
 
               for (const line of lines) {
                 if (line.startsWith('data: ')) {
                   const message = line.slice(6).trim();
                   if (message === '[DONE]') {
-                    // Process any remaining data in the buffer
-                    if (!firstSentenceComplete && firstSentence.length > 0) {
-                      const correctedFirstSentence = ensureFirstSentencePunctuation(firstSentence);
-                      controller.enqueue(new TextEncoder().encode(correctedFirstSentence));
-                    }
                     if (selectedModel === 'llama-3.1-sonar-small-128k-online') {
                       controller.enqueue(
                         new TextEncoder().encode(
@@ -332,22 +279,10 @@ export async function POST(req: NextRequest) {
                     const content = parsed.choices[0].delta.content;
                     if (content) {
                       fullText += content;
-                      if (!firstSentenceComplete) {
-                        firstSentence += content;
-                        // Updated condition to check for character limit
-                        if (/[.?!]/.test(firstSentence) || firstSentence.length >= FIRST_SENTENCE_CHAR_LIMIT) {
-                          firstSentenceComplete = true;
-                          const correctedFirstSentence = ensureFirstSentencePunctuation(firstSentence);
-                          controller.enqueue(new TextEncoder().encode(correctedFirstSentence));
-                        }
-                        // Else, continue accumulating
-                      } else {
-                        controller.enqueue(new TextEncoder().encode(content));
-                      }
+                      controller.enqueue(new TextEncoder().encode(content));
                     }
                   } catch (e) {
                     console.error('Error parsing Perplexity response:', e);
-                    // Accumulate incomplete JSON messages
                     buffer = 'data: ' + message + '\n';
                   }
                 }
@@ -355,12 +290,6 @@ export async function POST(req: NextRequest) {
             });
 
             response.data.on('end', () => {
-              // Process any remaining data in the buffer
-              if (!firstSentenceComplete && firstSentence.length > 0) {
-                const correctedFirstSentence = ensureFirstSentencePunctuation(firstSentence);
-                controller.enqueue(new TextEncoder().encode(correctedFirstSentence));
-              }
-
               if (selectedModel === 'llama-3.1-sonar-small-128k-online') {
                 controller.enqueue(
                   new TextEncoder().encode(
