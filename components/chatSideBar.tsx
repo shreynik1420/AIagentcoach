@@ -64,7 +64,7 @@ function ChatHistory({ userId, supabase }: any) {
   return (
     <div className="w-64 h-screen text-white bg-gray-900"> {/* Background color consistent with sidebar */}
       <hr className="border-gray-700"></hr>
-      <h2 className="flex items-center justify-center text-xl font-semibold p-4 text-gray-100 ">Chat History</h2> {/* Font size and color matched */}
+      <h2 className="flex items-center justify-center text-xl font-semibold p-4 text-gray-100 common-text">Chat History</h2> {/* Font size and color matched */}
       <ScrollArea className="h-[calc(100vh-4rem)] p-2">
         {chatPreviews.length > 0 ? (
           chatPreviews.map((chat) => (
@@ -89,7 +89,7 @@ function ChatHistory({ userId, supabase }: any) {
             </Link>
           ))
         ) : (
-          <p className="text-gray-400 p-4">No chats available.</p>
+          <p className="text-gray-400 p-4 common-text">No chats available.</p>
         )}
       </ScrollArea>
     </div>
@@ -105,14 +105,14 @@ export default function Sidebar({ isSidebarOpen, userId, supabase, handleExpertC
     >
       <Button
             variant="ghost"
-            className="flex items-center justify-center h-16 w-full border-b border-gray-700 text-white hover:text-white hover:bg-gray-800"
+            className="flex items-center justify-center h-16 w-full border-b border-gray-700 text-white hover:text-white hover:bg-gray-800 common-text"
             onClick={() => handleExpertClick('General')}
           >
             <Brain className="h-6 w-6 mr-2" />
-            <span className="font-semibold">Your AI Coach</span>
+            <span className="font-semibold common-text">Your AI Coach</span>
           </Button>
           <div className="p-4 space-y-4">
-            <h3 className="text-sm font-semibold text-gray-400 mb-2">Chat with an AI expert in:</h3>
+            <h3 className="text-sm font-semibold text-gray-400 mb-2 common-text">Chat With An AI Expert in:</h3>
             <Button
               variant="ghost"
               className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800"

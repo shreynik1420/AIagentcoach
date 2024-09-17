@@ -13,7 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   ArrowRight,
   MessageCircle,
-  Share,
+  Copy,
   ThumbsDown,
   ThumbsUp,
   Handshake,
@@ -30,8 +30,6 @@ import {
   Menu,
   Megaphone,
   Home,
-  ExternalLink,
-  MoreHorizontal,
   BookCheck,
   TargetIcon,
 } from "lucide-react";
@@ -249,7 +247,7 @@ export default function Page({ params: { chat_id } }: Props) {
         while (!done) {
           const { value, done: doneReading } = await reader.read();
           done = doneReading;
-          const chunkValue = decoder.decode(value);
+          const chunkValue = decoder.decode(value, { stream: true }); // Ensure streaming is handled correctly
   
           // Update assistant message content progressively
           newMessages[assistantMessageIndex].content += chunkValue;
@@ -335,9 +333,10 @@ export default function Page({ params: { chat_id } }: Props) {
   const handleShare = (chatId: string) => {
     const shareUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/chat/${chatId}`;
     
-    // Copy URL to clipboard
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      // Show a toast notification
+    // Copy the full response to clipboard
+    const fullResponse = messages.map(msg => msg.content).join('\n');
+
+    navigator.clipboard.writeText(fullResponse).then(() => {
       toast.success('Copied to clipboard!', {
         position: "bottom-right",
         autoClose: 2000,
@@ -549,8 +548,9 @@ export default function Page({ params: { chat_id } }: Props) {
                             variant="ghost"
                             size="icon"
                             onClick={() => handleShare(chat_id)}
-                            className="text-gray-400 hover:text-white hover:bg-gray-800">
-                            <Share className="h-4 w-4" />
+                            className="text-gray-400 hover:text-white hover:bg-gray-800"
+                          >
+                            <Copy className="h-4 w-4" />
                           </Button>
                         </div>
                       )}
