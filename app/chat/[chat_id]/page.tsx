@@ -488,7 +488,7 @@ export default function Page({ params: { chat_id } }: Props) {
         progress: undefined,
       });
     }
-    // Update the 'like' field in the database
+    // Update the 'like' field in the databased
     const { data, error } = await supabase
       .from("message")
       .update({ like: likeValue })
