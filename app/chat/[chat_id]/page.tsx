@@ -695,7 +695,7 @@ export default function Page({ params: { chat_id } }: Props) {
               </div>
             </ScrollArea>
             <div className="border-t border-gray-700 p-4">
-              {firstMessageSent && (
+              {messages.length > 0 && (
                 <div className="action-buttons flex justify-center space-x-4 mb-5">
                   <button 
                     onClick={() => handleActionClick('examples')}
