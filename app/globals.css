@@ -5,17 +5,24 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --g3: linear-gradient(338deg, #000362 14.51%, #07323f 85.49%);
+}
+
+@layer base {
+  * {
+    @apply transition-colors duration-500;
+  }
 }
 
 ::-webkit-scrollbar {
-  width: 0!important;
-  height: 0px!important;
+  width: 0 !important;
+  height: 0px !important;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(0,0,0,.2);
+  background-color: rgba(0, 0, 0, 0.2);
 }
 ::-webkit-scrollbar-track {
-  background: hsla(0,0%,100%,.1);
+  background: hsla(0, 0%, 100%, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -108,3 +115,11 @@ body {
   color: #ffffff; /* Adjust color as needed */
   text-align: center; /* Center align if needed */
 }
+
+.no-transition * {
+  transition: none !important;
+}
+
+/* document.addEventListener('DOMContentLoaded', function() {
+  document.documentElement.classList.remove('no-transition');
+}); */

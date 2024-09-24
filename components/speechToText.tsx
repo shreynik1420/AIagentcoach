@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Mic, StopCircle } from "lucide-react"; // Add StopCircle for the stop button
+import { Mic, StopCircle } from "lucide-react"; 
 import axios from "axios";
-
-// Add Modal component for popup (this can be customized according to your UI library)
 import Modal from "@/components/ui/modal";
 import Spinner from "@/components/ui/spinner";
+import WaveformRecordingModal from "./WaveformRecordingModal";
 
 interface SpeechToTextProps {
   onTranscribe: (text: string) => void;
@@ -13,9 +12,9 @@ interface SpeechToTextProps {
 
 const SpeechToText: React.FC<SpeechToTextProps> = ({ onTranscribe }) => {
   const [isListening, setIsListening] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false); // State to track processing
-  const [showModal, setShowModal] = useState(false); // State for showing modal
-  const [timeElapsed, setTimeElapsed] = useState(0); // Timer for recording duration
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [timeElapsed, setTimeElapsed] = useState(0);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -51,8 +50,7 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({ onTranscribe }) => {
           },
         }
       );
-      const transcription = response.data.text;
-      return transcription;
+      return response.data.text;
     } catch (error) {
       console.error("Error transcribing audio:", error);
       throw error;
@@ -72,40 +70,35 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({ onTranscribe }) => {
       };
 
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, {
-          type: "audio/wav",
-        });
-        const audioFile = new File([audioBlob], "audio.wav", {
-          type: "audio/wav",
-        });
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
+        const audioFile = new File([audioBlob], "audio.wav", { type: "audio/wav" });
 
-        setIsProcessing(true); // Show processing state
+        setIsProcessing(true);
         const transcribedText = await transcribeAudio(audioFile);
         onTranscribe(transcribedText);
-        setIsProcessing(false); // Hide processing state
+        setIsProcessing(false);
         setIsListening(false);
-        setShowModal(false); // Hide modal after transcription
-        clearInterval(timerRef.current!); // Stop the timer
-        setTimeElapsed(0); // Reset the timer
-
-        // Stop all tracks of the stream
-        if (streamRef.current) {
-          streamRef.current.getTracks().forEach(track => track.stop());
-        }
+        setShowModal(false);
+        clearInterval(timerRef.current!);
+        setTimeElapsed(0);
       };
 
       mediaRecorder.start();
       setIsListening(true);
-      setShowModal(true); // Show modal when recording starts
+      setShowModal(true);
       timerRef.current = setInterval(() => {
         setTimeElapsed((prev) => prev + 1);
-      }, 1000); // Start the timer
+      }, 1000);
     } catch (error) {
       console.error("Error accessing microphone:", error);
     }
   };
 
   const stopRecording = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
     }
@@ -128,44 +121,25 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({ onTranscribe }) => {
 
   return (
     <>
-      {/* Modal that shows while recording */}
+      {/* Modal for recording waveform */}
       {showModal && (
-        <Modal onClose={() => setShowModal(false)} open={showModal}>
-          <div className="flex flex-col items-center bg-gray-900 text-white p-6 rounded-lg shadow-lg">
-            <div className="w-12 h-12 mb-4 relative">
-              <div className="absolute inset-0 bg-blue-500 rounded-full opacity-25 animate-ping"></div>
-              <div className="relative flex items-center justify-center w-full h-full bg-blue-500 rounded-full">
-                <Mic className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <p className="text-lg font-semibold mb-2">{formatTime(timeElapsed)}</p>
-            {isProcessing && <Spinner />}
-            {isListening && (
-              <Button 
-                onClick={stopRecording} 
-                className="mt-4 bg-transparent border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors duration-300"
-              >
-                Stop
-              </Button>
-            )}
-          </div>
-        </Modal>
+        <WaveformRecordingModal
+          duration={timeElapsed}
+          audioStream={streamRef.current} // Pass the audio stream
+          onStop={stopRecording}
+        />
       )}
 
-      {/* Button to start/stop recording */}
-      <Button
+      <button
         type="button"
-        size="icon"
         onClick={toggleListening}
-        className="bg-gray-800 text-gray-300 hover:text-white"
       >
-        {/* Change icon based on recording state */}
         {isListening ? (
           <StopCircle className="h-4 w-4 text-red-500" />
         ) : (
-          <Mic className="h-4 w-4" />
+          <Mic className="h-6 w-6 text-[#2F76FF]" />
         )}
-      </Button>
+      </button>
     </>
   );
 };

@@ -9,6 +9,7 @@ import {
   UserButton
 } from '@clerk/nextjs'
 import { ToastContainer } from "react-toastify";
+// import { ThemeProvider } from "@/components/theme-provider";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -33,6 +34,24 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
+        <head>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function() {
+                  const theme = localStorage.getItem('theme');
+                  if (theme) {
+                    document.documentElement.classList.add(theme);
+                  }
+                  document.documentElement.classList.add('no-transition');
+                  document.addEventListener('DOMContentLoaded', function() {
+                    document.documentElement.classList.remove('no-transition');
+                  });
+                })();
+              `,
+            }}
+          />
+        </head>
         <body>{children}</body>
       </html>
     </ClerkProvider>

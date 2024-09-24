@@ -1,0 +1,150 @@
+.stp {
+}
+
+.subarr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  height: 100%;
+  border-radius: 80px;
+}
+
+.sugcon {
+  width: auto;
+  margin: 0px;
+  overflow: auto;
+}
+.logomain {
+  /* padding: 5px; */
+  height: 45px;
+  width: 200px;
+}
+.sugesttext {
+  padding: 0px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+.incon {
+  padding: 0px 10px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.avatar {
+}
+.mode {
+  height: 32px;
+  width: 32px;
+}
+
+/* background: rgba(86, 118, 181, 0.65); */
+
+.text-gradient {
+  background: linear-gradient(337.76deg, #000362 14.51%, #07323f 85.49%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.pad {
+  padding: 0px;
+  background-color: inherit;
+  border: none !important;
+  outline: none;
+  /* color: none; */
+}
+
+.gradient-text {
+  background: -webkit-linear-gradient(rgb(86, 118, 181), rgb(17, 30, 62));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+.con {
+  position: absolute;
+  right: 0px;
+  top: 0;
+  display: flex;
+  height: 100%;
+  gap: 14px;
+}
+
+.arrr {
+  width: 48px;
+}
+
+.no-margin-mobile {
+  margin: 12px 10px 12px 12px;
+  border-radius: 20px;
+  border-right: 1px solid var(--c3, #79a6ff);
+  background: linear-gradient(
+    0deg,
+    rgba(121, 166, 255, 0.16) 0%,
+    rgba(47, 118, 255, 0.16) 100%
+  );
+  backdrop-filter: blur(20px);
+}
+
+.mobilebg {
+  position: relative;
+  /* background: linear-gradient(
+      0deg,
+      rgba(15, 16, 35, 0.8) 0%,
+      rgba(15, 16, 35, 0.8) 100%
+    ),
+    #000; */
+}
+.overlay {
+  top: -150px;
+  left: -220px;
+  position: absolute;
+  width: 450px;
+  height: 559px;
+  transform: rotate(-90deg);
+  border-radius: 559px;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(35, 66, 113, 0.6) 0%,
+    rgba(35, 66, 113, 0) 100%
+  );
+}
+
+.pt {
+  padding-top: 60px;
+}
+
+/* .customScroll {
+  overflow-y: auto;
+  max-height: calc(100% - 100px);
+} */
+
+.avatar {
+  height: 35px;
+  width: 35px;
+}
+@media (max-width: 768px) {
+  .no-margin-mobile {
+    margin: 10px 0px 0px 10px;
+  }
+  .incon {
+    width: 100vw;
+  }
+  .pad {
+    padding: 0px;
+  }
+  .logomain {
+    height: 40px;
+    width: 150px;
+  }
+}

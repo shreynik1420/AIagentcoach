@@ -51,6 +51,12 @@ import HeaderBar from "@/components/header";
 import TopicIntroduction from "@/components/topicIntroduction";
 import SpeechToText from "@/components/speechToText";
 import { useUser } from "@clerk/nextjs";
+import { FaArrowRight } from "react-icons/fa6";
+import styles from "@/components/overall.module.css"
+import avatarlight from "@/components/Assets/avatar.png"
+import avatardark from "@/components/Assets/darkavatar.png"
+// import aiavatar from ""
+import useTheme from "@/app/hooks/useTheme"; 
 
 type Message = {
   role: "user" | "assistant" | "system";
@@ -70,6 +76,7 @@ type Props = {
 type ExpertType = 'General' | 'Real Estate' | 'Sales' | 'Marketing' | 'Negotiation' | 'Motivation';
 
 function formatTables(content: string): string {
+  console.log("loaded main")
   // Check if the content is already in HTML format
   if (content.includes('<tr>') && content.includes('<td')) {
     const tableHtml = `
@@ -89,7 +96,6 @@ function formatTables(content: string): string {
     return `<custom-table>${tableHtml}</custom-table>`;
   }
 
-  // Original markdown table handling
   const tableRegex = /^\s*\|.*\|.*\n\s*\|.*\|.*\n(\s*\|.*\|.*\n)+/gm;
   return content.replace(tableRegex, (match) => {
     const rows = match.trim().split('\n');
@@ -132,7 +138,7 @@ export default function Page({ params: { chat_id } }: Props) {
   const [inputValue, setInputValue] = useState("");
   const newRouteRef = useRef('');
   const [currentExpert, setCurrentExpert] = useState<ExpertType>("General");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const { userId } = useAuth();
   const router = useRouter();
@@ -145,7 +151,7 @@ export default function Page({ params: { chat_id } }: Props) {
   const userEmail = user?.emailAddresses[0]?.emailAddress;
   const [placeholder, setPlaceholder] = useState(`Ask me any question about ${currentExpert.toLowerCase()}! Just type or use the microphone.`);
   const [firstMessageSent, setFirstMessageSent] = useState(false);
-
+const { theme, toggleTheme } = useTheme(); 
   useEffect(() => {
     if (Boolean(searchParam.get("new")) ) {
       if(newRouteRef.current) return;
@@ -183,7 +189,7 @@ export default function Page({ params: { chat_id } }: Props) {
   }, [messages]);
 
   const handleSendMessage = async (message: string) => {
-    if(!isSidebarOpen) handleAskQuestion(message);
+    // if(!isSidebarOpen) handleAskQuestion(message);
     if (isSending) return;
     setIsSending(true);
   
@@ -430,10 +436,14 @@ export default function Page({ params: { chat_id } }: Props) {
     switch (expert) {
       case 'General':
         return (
-          <AvatarImage
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/2%20copy-FNVfXcGRjKO97dR4JbmOnzv21Ov8LM.png"
+          
+          <Image
+          src={theme === "light" ? avatardark : avatarlight}
+          className={styles.avatar}
+            // src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/2%20copy-FNVfXcGRjKO97dR4JbmOnzv21Ov8LM.png"
             alt="AI"
           />
+        
         );
       case 'Real Estate':
         IconComponent = Home;
@@ -553,25 +563,44 @@ export default function Page({ params: { chat_id } }: Props) {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900 text-white">
+    <div 
+    className={`flex flex-col h-screen text-white dark:bg-[rgba(213,227,255,1)] ${styles.mobilebg} bg-gradient-to-t from-[rgba(15, 16, 35, 0.8)] to-[rgba(15, 16, 35, 0.8)] bg-black`}
+  >
+<div
+  className="absolute top-[-150px] left-[-220px] w-[450px] h-[559px] rotate-[-90deg] rounded-[559px] bg-[radial-gradient(50%_50%_at_50%_50%,rgba(35,66,113,0.6)_0%,rgba(35,66,113,0)_100%)] dark:bg-[radial-gradient(50%_50%_at_50%_50%,rgba(148,184,255,0.60)_0%,rgba(110,151,232,0)_100%)]"
+/>
+
+
+{/* <div className={styles.overlay}/> */}
+
+
+
       <SignedIn>
       
          {/* Header */}
          <HeaderBar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} signOut={signOut}/>
         {/* Main Content */}
-        <div className="flex flex-1 overflow-hidden pt-16">
+        <div className={`flex flex-1 overflow-hidden ${styles.pt} bg-[linear-gradient(0deg,rgba(15,16,35,0.80)_0%,rgba(15,16,35,0.80)_100%),_#000] dark:bg-[linear-gradient(0deg,rgba(213,227,255,0.74)_0%,rgba(213,227,255,0.74)_100%),_#FFF]`}> 
+
+
+              {/* <div
+  className={`flex flex-1 overflow-hidden ${styles.pt}`}
+  style={{ backgroundColor: 'rgba(17, 24, 39, var(--tw-bg-opacity))' }}
+>
           {" "}
           {/* Added pt-16 for header height */}
 
           <ChatSidebar userId={userId} supabase={supabase} isSidebarOpen={isSidebarOpen} handleExpertClick={handleExpertClick} />
           {/* Main Chat Area */}
          
-          <div className="flex-1 flex flex-col bg-gray-900 overflow-hidden">
+          <div className="flex-1 flex flex-col w-full  bg-gradient-to-t from-[rgba(15, 16, 35, 0.80)] to-[rgba(15, 16, 35, 0.80)]">
+
+          {/* dark:bg-[rgba(213,227,255,0.74)] */}
             <ScrollArea className="flex-1">
               
-              <div className="p-4 space-y-4 min-h-[calc(100vh-12rem)]">
+              <div className="p-4 space-y-4 min-h-[calc(100vh-15rem)]">
               {messages.length === 0 ? (
-                  <div className="pt-8">
+                  <div className="pt-2">
                     <TopicIntroduction
                       topic={currentExpert}
                       onAskQuestion={handleAskQuestion}
@@ -601,8 +630,8 @@ export default function Page({ params: { chat_id } }: Props) {
                       <div
                         className={`p-3 rounded-lg ${
                           message.role === "user"
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-800 text-gray-300"
+                          ? "bg-[#1E2A5E] text-white border border-[rgba(47, 118, 255, 1)]"
+                          : "bg-gray-800 text-gray-300 dark:bg-custom-gradient dark:bg-transparent dark:text-black"
                         }`}>
                         <ReactMarkdown
                           components={{
@@ -630,11 +659,12 @@ export default function Page({ params: { chat_id } }: Props) {
                               onClick={() => handleLike(message.message_id, 1)}
                               className={`${
                                 message.like === 1
-                                  ? "text-blue-400"
-                                  : "text-gray-400 hover:text-white hover:bg-gray-800"
+                                  ? "text-blue-400 hover:bg-gray-800 dark:hover:bg-white"
+                                  : "text-gray-400 dark:text-[#001c4f] hover:text-white hover:bg-gray-800 dark:hover:bg-white"
+
                               }`}
                             >
-                              <ThumbsUp className="h-4 w-4" />
+                              <ThumbsUp className="h-4 w-4 " />
                             </Button>
                             <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
                               Like this response
@@ -647,8 +677,8 @@ export default function Page({ params: { chat_id } }: Props) {
                               onClick={() => handleLike(message.message_id, -1)}
                               className={`${
                                 message.like === -1
-                                  ? "text-red-400"
-                                  : "text-gray-400 hover:text-white hover:bg-gray-800"
+                                  ? "text-red-400 hover:bg-gray-800 dark:hover:bg-white"
+                                  : "text-gray-400 dark:text-[#001c4f] hover:text-white hover:bg-gray-800 dark:hover:bg-white"
                               }`}
                             >
                               <ThumbsDown className="h-4 w-4" />
@@ -662,7 +692,7 @@ export default function Page({ params: { chat_id } }: Props) {
                               variant="ghost"
                               size="icon"
                               onClick={() => handleCopyToClipboard(message.content)}
-                              className="text-gray-400 hover:text-white hover:bg-gray-800"
+                              className="text-gray-400  dark:text-[#001c4f] hover:text-white hover:bg-gray-800 dark:hover:bg-white"
                             >
                               <Copy className="h-4 w-4" />
                             </Button>
@@ -675,7 +705,7 @@ export default function Page({ params: { chat_id } }: Props) {
                               variant="ghost"
                               size="icon"
                               onClick={() => handleShare(message.content)}
-                              className="text-gray-400 hover:text-white hover:bg-gray-800"
+                              className="text-gray-400 dark:text-[#001c4f] hover:text-white hover:bg-gray-800 dark:hover:bg-white"
                             >
                               <Share className="h-4 w-4" />
                             </Button>
@@ -694,74 +724,115 @@ export default function Page({ params: { chat_id } }: Props) {
                 <div ref={chatEndRef} />
               </div>
             </ScrollArea>
-            <div className="border-t border-gray-700 p-4">
-              {messages.length > 0 && (
-                <div className="action-buttons flex justify-center space-x-4 mb-5">
-                  <button 
-                    onClick={() => handleActionClick('examples')}
-                    className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5 relative group"
-                    title="Request specific examples related to the topic"
-                  >
-                    <BookCheck className="h-3.5 w-3.5" />
-                    <span>Give me examples</span>
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
-                      Request specific examples
-                    </div>
-                  </button>
-                  <button 
-                    onClick={() => handleActionClick('specific')}
-                    className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5 relative group"
-                    title="Ask for more detailed information"
-                  >
-                    <TargetIcon className="h-3.5 w-3.5" />
-                    <span>Be more specific</span>
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
-                      Ask for more details
-                    </div>
-                  </button>
-                  <button 
-                    onClick={() => handleActionClick('understand')}
-                    className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5 relative group"
-                    title="Request clarification on the topic"
-                  >
-                    <HelpCircle className="h-3.5 w-3.5" />
-                    <span>I don't understand</span>
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
-                      Request clarification
-                    </div>
-                  </button>
-                  <button 
-                    onClick={() => handleActionClick('continue')}
-                    className="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors duration-200 flex items-center space-x-1.5 relative group"
-                    title="Continue the current conversation"
-                  >
-                    <ArrowRight className="h-3.5 w-3.5" />
-                    <span>Continue</span>
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
-                      Continue conversation
-                    </div>
-                  </button>
-                </div>
-              )}
-              <form onSubmit={handleFormSubmit} className="flex space-x-2">
-                <Input
-                  className="flex-1 bg-gray-800 text-white border-gray-700 focus:border-blue-400"
-                  placeholder={placeholder}
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                />
-                 {/* Use SpeechToText component */}
-                 <SpeechToText onTranscribe={handleTranscription} />
-                <Button
-                  type="submit"
-                  size="icon"
-                  className="bg-blue-600 text-white hover:bg-blue-700">
-                  <MessageCircle className="h-4 w-4" />
-                </Button>
+            <div className="pt-4 md:p-4">
+            <div className={`${styles.sugcon} overflow-x-auto whitespace-nowrap`}>
+  {messages.length > 0 && (
+    <div className={`action-buttons space-x-2 mb-5 ${styles.sugesttext} flex`}>
+      <button 
+        onClick={() => handleActionClick('examples')}
+        // className="ml-[220px] md:ml-[0px] bg-[rgba(30,42,94,0.4)] text-gray-200 px-[13px] py-[8px] rounded-[42px] text-sm hover:bg-[rgba(30,42,94,1)] hover:text-white transition-colors duration-200 flex items-center space-x-[10px] relative group whitespace-nowrap flex-shrink-0 border border-[#2F76FF] box-border"
+        className="ml-[220px] dark:text-[#1E2A5E] md:ml-[0px] bg-[rgba(30,42,94,0.4)] dark:bg-[rgba(165,195,255,0.24)] text-gray-200 px-[13px] py-[8px] rounded-[42px] text-sm hover:bg-[rgba(30,42,94,1)] hover:dark:bg-[rgba(165,195,255,0.4)] hover:text-white transition-colors duration-200 flex items-center space-x-[10px] relative group whitespace-nowrap flex-shrink-0 border border-[#2F76FF] box-border"
+
+
+        title="Request specific examples related to the topic"
+      >
+        <BookCheck className="h-3.5 w-3.5" />
+        <span>Give me examples</span>
+        <div 
+        className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+          Request specific examples
+        </div>
+      </button>
+      
+      <button 
+        onClick={() => handleActionClick('specific')}
+        // className="ml-[220px] md:ml-[0px] bg-[rgba(30,42,94,0.4)] text-gray-200 px-[13px] py-[8px] rounded-[42px] text-sm hover:bg-[rgba(30,42,94,1)] hover:text-white transition-colors duration-200 flex items-center space-x-[10px] relative group whitespace-nowrap flex-shrink-0 border border-[#2F76FF] box-border"
+        className="ml-[220px] dark:text-[#1E2A5E] md:ml-[0px] bg-[rgba(30,42,94,0.4)] dark:bg-[rgba(165,195,255,0.24)] text-gray-200 px-[13px] py-[8px] rounded-[42px] text-sm hover:bg-[rgba(30,42,94,1)] hover:dark:bg-[rgba(165,195,255,0.4)] hover:text-white transition-colors duration-200 flex items-center space-x-[10px] relative group whitespace-nowrap flex-shrink-0 border border-[#2F76FF] box-border"
+
+        title="Ask for more detailed information"
+      >
+        <TargetIcon className="h-3.5 w-3.5" />
+        <span>Be more specific</span>
+        <div 
+        className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+          Ask for more details
+        </div>
+      </button>
+      
+      <button 
+        onClick={() => handleActionClick('understand')}
+        // className="ml-[220px] md:ml-[0px] bg-[rgba(30,42,94,0.4)] text-gray-200 px-[13px] py-[8px] rounded-[42px] text-sm hover:bg-[rgba(30,42,94,1)] hover:text-white transition-colors duration-200 flex items-center space-x-[10px] relative group whitespace-nowrap flex-shrink-0 border border-[#2F76FF] box-border"
+        className="ml-[220px] dark:text-[#1E2A5E] md:ml-[0px] bg-[rgba(30,42,94,0.4)] dark:bg-[rgba(165,195,255,0.24)] text-gray-200 px-[13px] py-[8px] rounded-[42px] text-sm hover:bg-[rgba(30,42,94,1)] hover:dark:bg-[rgba(165,195,255,0.4)] hover:text-white transition-colors duration-200 flex items-center space-x-[10px] relative group whitespace-nowrap flex-shrink-0 border border-[#2F76FF] box-border"
+   
+        title="Request clarification on the topic"
+      >
+        <HelpCircle className="h-3.5 w-3.5" />
+        <span>I don't understand</span>
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+          Request clarification
+        </div>
+      </button>
+      
+      <button 
+        onClick={() => handleActionClick('continue')}
+        // className="ml-[220px] md:ml-[0px] bg-[rgba(30,42,94,0.4)] text-gray-200 px-[13px] py-[8px] rounded-[42px] text-sm hover:bg-[rgba(30,42,94,1)] hover:text-white transition-colors duration-200 flex items-center space-x-[10px] relative group whitespace-nowrap flex-shrink-0 border border-[#2F76FF] box-border"
+        className="ml-[220px] dark:text-[#1E2A5E] md:ml-[0px] bg-[rgba(30,42,94,0.4)] dark:bg-[rgba(165,195,255,0.24)] text-gray-200 px-[13px] py-[8px] rounded-[42px] text-sm hover:bg-[rgba(30,42,94,1)] hover:dark:bg-[rgba(165,195,255,0.4)] hover:text-white transition-colors duration-200 flex items-center space-x-[10px] relative group whitespace-nowrap flex-shrink-0 border border-[#2F76FF] box-border"
+        
+        title="Continue the current conversation"
+      >
+        <ArrowRight className="h-3.5 w-3.5" />
+        <span>Continue</span>
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mb-2 whitespace-nowrap">
+          Continue conversation
+        </div>
+      </button>
+    </div>
+  )}
+</div>
+
+              <div className={styles.incon}>
+              <form onSubmit={handleFormSubmit} className="relative flex items-center w-full">
+              <Input
+  className={`flex-1 bg-[#F0F0F0] text-[rgb(30,42,94)] border border-[#2F76FF] focus:outline-none pr-28 pl-6 
+                dark:border-[#000000] 
+              placeholder:text-[rgb(30,42,94)]`}
+  placeholder={placeholder}
+  style={{
+    borderRadius: '80px',
+    border: '0.5px solid #2F76FF',
+    background: '#F0F0F0',
+    WebkitBackdropFilter: 'blur(20px)',
+    backdropFilter: 'blur(20px)',
+    fontSize: '16px',
+    fontStyle: 'normal',
+    fontWeight: 300,
+
+  }}
+  value={inputValue}
+  onChange={(e) => setInputValue(e.target.value)}
+/>
+
+
+
+
+                
+                 <div  className={styles.con}>
+    <SpeechToText onTranscribe={handleTranscription} />
+   <button
+  type="submit"
+  className="flex items-center justify-center  bg-[#2F76FF] h-full rounded-[80px]"
+>
+<FaArrowRight fill="white" className="w-[48px] " size={25} />
+
+</button>
+
+  </div>
               </form>
-              <p className="text-xs text-gray-500 mt-2 text-center">
+              <p className="text-xs text-gray-500 mt-3  text-center pb-2">
                 © 2024 AgentCoach.ai. All rights reserved.
               </p>
+              </div>
+
             </div>
           </div>
         </div>

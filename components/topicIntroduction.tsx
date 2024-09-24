@@ -25,7 +25,7 @@ const TopicIntroduction: React.FC<{
  }> = ({ topic, onAskQuestion }) => {
    const topicData = {
      General: {
-       icon: <Brain className="w-14 h-14 md:w-18 md:h-18" />,
+       icon:  <Brain className="w-20 h-20 md:w-18 md:h-18 text-blue-400 dark:text-[rgba(0,3,98,1)]" />,
        description: 'Your personal AI Coach for various aspects of professional and personal development.',
        questions: [
          { icon: <HelpCircle />, text: 'How can AI real estate coaching benefit me?' },
@@ -35,7 +35,7 @@ const TopicIntroduction: React.FC<{
        ],
      },
      'Real Estate': {
-       icon: <Home className="w-12 h-12 md:w-16 md:h-16" />,
+       icon: <Home className="w-12 h-12 md:w-16 md:h-16 dark:text-[rgba(0,3,98,1)]" />,
        description: 'Get expert advice on real estate industry insights and practices.',
        questions: [
          { icon: <HelpCircle />, text: 'Could you prepare a Competitive Market Analysis for my upcoming listing appointment?' },
@@ -45,7 +45,7 @@ const TopicIntroduction: React.FC<{
        ],
      },
      Sales: {
-       icon: <TrendingUp className="w-12 h-12 md:w-16 md:h-16" />,
+       icon: <TrendingUp className="w-12 h-12 md:w-16 md:h-16 dark:text-[rgba(0,3,98,1)]" />,
        description: 'Boost your sales performance with expert strategies and techniques.',
        questions: [
          { icon: <HelpCircle />, text: 'How can I generate more leads online?' },
@@ -55,7 +55,7 @@ const TopicIntroduction: React.FC<{
        ],
      },
      Marketing: {
-       icon: <Megaphone className="w-12 h-12 md:w-16 md:h-16" />,
+       icon: <Megaphone className="w-12 h-12 md:w-16 md:h-16 dark:text-[rgba(0,3,98,1)]" />,
        description: 'Enhance your marketing strategies and communication skills in real estate.',
        questions: [
          { icon: <HelpCircle />, text: 'Can you write a BLOG article for first-time home buyers?' },
@@ -65,7 +65,7 @@ const TopicIntroduction: React.FC<{
        ],
      },
      Negotiation: {
-       icon: <Handshake className="w-12 h-12 md:w-16 md:h-16" />,
+       icon: <Handshake className="w-12 h-12 md:w-16 md:h-16 dark:text-[rgba(0,3,98,1)]" />,
        description: 'Master the art of win-win outcomes and effective communication.',
        questions: [
          { icon: <HelpCircle />, text: "Could you offer a specific response for a negotiation I'm currently involved in?" },
@@ -75,7 +75,7 @@ const TopicIntroduction: React.FC<{
        ],
      },
      Motivation: {
-       icon: <Zap className="w-12 h-12 md:w-16 md:h-16" />,
+       icon: <Zap className="w-12 h-12 md:w-16 md:h-16 dark:text-[rgba(0,3,98,1)]" />,
        description: 'Unlock your potential with powerful motivation and goal-setting strategies.',
        questions: [
          { icon: <HelpCircle />, text: 'What strategies can I use to stay motivated and encouraged?' },
@@ -89,27 +89,37 @@ const TopicIntroduction: React.FC<{
    const data = topicData[topic];
 
    return (
-     <div className="flex flex-col items-center justify-center space-y-5 max-w-2xl mx-auto mb-7 px-4">
-       <div className="text-blue-400">{data.icon}</div>
-       <h2 className="text-xl font-bold text-white text-center">{topic}</h2>
-       <p className="text-center text-gray-300 text-sm">{data.description}</p>
-       <p className="text-center text-gray-300 text-sm">
-         Click one of the sample questions below or type your own question!
-       </p>
-       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-         {data.questions.map((question, index) => (
-           <Card
-             key={index}
-             className="cursor-pointer hover:bg-gray-800 bg-gray-900"
-             onClick={() => onAskQuestion(question.text)}
-           >
-             <CardContent className="flex items-start p-4">
-               <div className="mr-3 mt-1 text-blue-400">{question.icon}</div>
-               <p className="text-sm text-gray-300">{question.text}</p>
-             </CardContent>
-           </Card>
-         ))}
-       </div>
+     <div className="flex flex-col items-center justify-center  max-w-2xl mx-auto mb-7 px-4" >
+       <div className="text-blue-400  mb-[20px]">{data.icon}</div>
+       {/* <h2 className="text-xl font-bold text-white text-center">{topic}</h2> */}
+      <div className="flex flex-col items-center  gap-[10px]">
+  <p className="text-center text-[var(--Foundation-White-white-50)] dark:text-[var(--c2,#1E2A5E)] font-satoshi text-[18px] font-normal leading-normal tracking-[0.32px]">
+    {data.description}
+  </p>
+  <p className="text-center text-[#B5B5B5] dark:text-[var(--c1,#2F76FF)] font-satoshi text-[16px] font-normal leading-normal tracking-[0.32px]">
+    Click a sample question below, type your own, or tap the microphone button to speak your question!
+  </p>
+</div>
+
+
+
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mt-[60px] " >
+  {data.questions.map((question, index) => (
+    <Card
+      key={index}
+      className="cursor-pointer bg-[rgba(0, 0, 0, 0.4)] border border-[1.038px] border-[#79A6FF] group transition-colors duration-300 ease-in-out hover:bg-[rgba(255,255,255,0.12)]  dark:hover:bg-[rgba(255,255,255,1)] dark:bg-[rgb(214, 225, 245)] bg-[linear-gradient(0deg, rgba(213, 227, 255, 0.74) 0%, rgba(213, 227, 255, 0.74) 100%), #FFF]"
+
+      onClick={() => onAskQuestion(question.text)}
+    >
+     <CardContent className="flex items-center p-4">
+  <div className="mr-3 text-blue-400 dark:text-[#1E2A5E] flex-shrink-0">{question.icon}</div>
+  <p className="text-sm text-gray-300 dark:text-[#1E2A5E]">{question.text}</p>
+</CardContent>
+
+    </Card>
+  ))}
+</div>
+
      </div>
    );
 };
