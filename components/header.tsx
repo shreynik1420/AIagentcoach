@@ -19,8 +19,7 @@ import useTheme from "@/app/hooks/useTheme";
 // Removed useState import
 // Removed PersonalizeModal import
 
-export default function headerBar({isSidebarOpen, setIsSidebarOpen, signOut}:any) {
-  // Removed isPersonalizeModalOpen state
+export default function HeaderBar({isSidebarOpen, setIsSidebarOpen, signOut}:any) {
   const { theme, toggleTheme } = useTheme(); // Use theme hook
 
   return (
