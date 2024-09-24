@@ -245,13 +245,14 @@ export function Page() {
 <Input
   className={`flex-1 bg-gray-200 text-white border border-[#2F76FF] focus:outline-none pr-28 pl-6 
               dark:bg-gray-800 dark:text-[#ffffff] dark:border-[#000000] 
-              placeholder:text-[#ffffff] dark:placeholder:text-[#6E97E8]`}
+              placeholder:text-[#000000] dark:placeholder:text-[#6E97E8]`}
               placeholder={`Ask me any question about ${currentExpert.toLowerCase()}! Just type or use the microphone.`}
 
   style={{
     borderRadius: '80px',
     border: '0.5px solid #2F76FF',
-    background: 'linear-gradient(0deg, rgba(121, 166, 255, 0.16) 0%, rgba(47, 118, 255, 0.16) 100%)',
+    background: '#F0F0F0',
+
     WebkitBackdropFilter: 'blur(20px)',
     backdropFilter: 'blur(20px)',
     fontSize: '16px',
