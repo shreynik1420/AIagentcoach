@@ -287,33 +287,7 @@ const { theme, toggleTheme } = useTheme();
           console.error("Error inserting system message into Supabase:", systemSupabaseError);
         }
   
-      } catch (error) {
-        console.error("Error:", error);
-        const errorMessage : Message={
-          role: "assistant",
-          content: "Sorry, I encountered an error. Please try again.",
-          user_id: userId || "",
-          order: prevOrder + 2,
-          chat_id: chat_id,
-          message_id: uuidv4(),
-          like: 0,
-        };
-        setMessages((prev) => [
-          ...prev,
-          errorMessage,
-        ]);
-        const { data: supabaseData, error: supabaseError } = await supabase
-        .from("message")
-        .insert([userMessage])
-        .select();
-        alert("There was an error sending your message. Please try again."); // Notify user of the error
-      } finally {
-        // Reset sending state
-        setIsSending(false);
-        setInputValue("");
-        setPlaceholder(`Ask me any question about ${currentExpert.toLowerCase()}! Just type or use the microphone.`);
-        setFirstMessageSent(true);
-      }
+      } 
     }
   };
 
