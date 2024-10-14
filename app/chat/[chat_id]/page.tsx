@@ -278,7 +278,6 @@ const { theme, toggleTheme } = useTheme();
           like: 0,
         };
   
-        // Insert assistant message (system message) into the database
         const { data: systemSupabaseData, error: systemSupabaseError } = await supabase
           .from("message")
           .insert([systemMessage])
@@ -288,8 +287,6 @@ const { theme, toggleTheme } = useTheme();
           console.error("Error inserting system message into Supabase:", systemSupabaseError);
         }
   
-        // Update state with the final assistant message
-        // setMessages((prev) => [...prev, systemMessage]);
       } catch (error) {
         console.error("Error:", error);
         const errorMessage : Message={
@@ -309,6 +306,7 @@ const { theme, toggleTheme } = useTheme();
         .from("message")
         .insert([userMessage])
         .select();
+        alert("There was an error sending your message. Please try again."); // Notify user of the error
       } finally {
         // Reset sending state
         setIsSending(false);
