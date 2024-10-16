@@ -278,6 +278,7 @@ const { theme, toggleTheme } = useTheme();
           like: 0,
         };
   
+        // Insert assistant message (system message) into the database
         const { data: systemSupabaseData, error: systemSupabaseError } = await supabase
           .from("message")
           .insert([systemMessage])
@@ -287,7 +288,34 @@ const { theme, toggleTheme } = useTheme();
           console.error("Error inserting system message into Supabase:", systemSupabaseError);
         }
   
-      } 
+        // Update state with the final assistant message
+        // setMessages((prev) => [...prev, systemMessage]);
+      } catch (error) {
+        console.error("Error:", error);
+        const errorMessage : Message={
+          role: "assistant",
+          content: "Sorry, I encountered an error. Please try again.",
+          user_id: userId || "",
+          order: prevOrder + 2,
+          chat_id: chat_id,
+          message_id: uuidv4(),
+          like: 0,
+        };
+        setMessages((prev) => [
+          ...prev,
+          errorMessage,
+        ]);
+        const { data: supabaseData, error: supabaseError } = await supabase
+        .from("message")
+        .insert([userMessage])
+        .select();
+      } finally {
+        // Reset sending state
+        setIsSending(false);
+        setInputValue("");
+        setPlaceholder(`Ask me any question about ${currentExpert.toLowerCase()}! Just type or use the microphone.`);
+        setFirstMessageSent(true);
+      }
     }
   };
 
